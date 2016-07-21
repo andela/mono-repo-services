@@ -6,16 +6,15 @@
  * assign topic_name to topicName variable
  * assign producer_id to producerId variable
  */
-var producerId = '{producer_id}';
 var topicName = '{topic_name}';
 var env = process.env.NODE_ENV || 'development';
 var config = require('./config/config')[env];
-var Kafka = require('no-kafka');
+var kafka = require('no-kafka');
 var moment = require('moment');
 var logger = require('winston');
-var producer = new Kafka.Producer({
-  clientId: producerId,
-  connectionString: config.kafkaConnection,
+var producer = new kafka.Producer({
+  clientId: config.kafka.clientId,
+  connectionString: config.kafka.connectionString,
   partitioner: function (topicName, topicPartitions, message) {
     var numOfPartitions = topicPartitions.length;
     var key = message.key;

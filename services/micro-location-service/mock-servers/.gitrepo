@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:andela/micro-mock-servers.git
+	branch = develop
+	commit = 02643c7e95a3ae5c2c1c330109f772fa9368872a
+	parent = 131c2dae663afa91ff5f4169226077178660ff17
+	cmdver = 0.3.0

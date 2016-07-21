@@ -11,7 +11,11 @@ var development = {
     url: process.env.DATABASE_URL || 'postgres://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
   },
   service: '{host}:{port}',
-  kafkaConnection: process.env.KAFKA_ADDR || '{host}:{port}'
+  kafka: {
+    groupId: '{service-name}-group',
+    clientId: '{service-name}',
+    connectionString: process.env.KAFKA_PEERS || 'localhost:9092'
+  }
 };
 
 var production = {
@@ -21,7 +25,11 @@ var production = {
     host: process.env.DATABASE_HOST,
   },
   service: '{host}:{port}',
-  kafkaConnection: process.env.KAFKA_ADDR || '{host}:{port}'
+  kafka: {
+    groupId: '{service-name}-group',
+    clientId: '{service-name}',
+    connectionString: process.env.KAFKA_PEERS || 'localhost:9092'
+  }
 };
 
 var test = {
@@ -29,7 +37,11 @@ var test = {
     url: process.env.DATABASE_URL || 'postgres://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
   },
   service: '{host}:{port}',
-  kafkaConnection: process.env.KAFKA_ADDR || '{host}:{port}'
+  kafka: {
+    groupId: '{service-name}-group',
+    clientId: '{service-name}',
+    connectionString: process.env.KAFKA_PEERS || 'localhost:9092'
+  }
 };
 
 var config = {

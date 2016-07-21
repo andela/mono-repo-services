@@ -4,7 +4,6 @@ machine:
     DATABASE_URL: postgres://ubuntu:@127.0.0.1:5432/circle_test
     COVERALLS_SERVICE_NAME: circle-ci
     COVERALLS_REPO_TOKEN: 0su27g7JQf6eqoCa58MxzTglh8ICrVoaZ
-    KAFKA_ADDR: 104.196.103.162:9092
 dependencies:
   post:
     - npm install module-deps

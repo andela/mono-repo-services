@@ -11,7 +11,7 @@
  * sampleController: controllers that handles the microservice endpoints
  */
 var grpc = require('grpc');
-var proto = grpc.load('proto/sample.proto');
+var proto = grpc.load('mock_servers/sample/sample.proto');
 var server = new grpc.Server();
 
 var env = process.env.NODE_ENV || 'development';
@@ -31,4 +31,4 @@ server.addProtoService(proto.authorization.AuthorizationService.service, {
 // initialize server
 server.bind(config.service, grpc.ServerCredentials.createInsecure());
 
-module.exports = server
+module.exports = server;

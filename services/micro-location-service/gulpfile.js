@@ -22,7 +22,7 @@ gulp.task('coveralls', function () {
     .pipe(exit());
 });
 
-gulp.task('db:sync', function () {
+gulp.task('db:create', function () {
   return models.sequelize.sync().then(exit());
 });
 
@@ -30,7 +30,7 @@ gulp.task('start:server', function () {
   return server.start();
 });
 
-gulp.task('server:test', ['db:sync', 'coverage-setup'], function () {
+gulp.task('server:test', ['db:create', 'coverage-setup'], function () {
   return gulp.src(['./test/controllers/*.js', './test/models/*.js', './test/event_handlers/*.js'])
     .pipe(mocha())
     .pipe(istanbul.writeReports({
