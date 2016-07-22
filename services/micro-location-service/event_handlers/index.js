@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Initialization file for the Event Handlers
  *
@@ -14,47 +12,60 @@
  * assign unique strategy_name to the strategyName variable
  * assign an array of topics to the subscriptions variable
  */
+const Kafka = require('no-kafka');
+const dns = require('dns');
+const Promise = require('bluebird');
+const logger = require('winston');
+const strategyName = '{strategy_name}';
+const groupId = '{group_id}';
+const subscriptions = ['{topic_name}'];
+const handlers = require('./register_events');
+let consumer;
 
-var strategyName = '{strategy_name}';
-var subscriptions = ['{topic_name}'];
-var Kafka = require('no-kafka');
-var Promise = require('bluebird');
-var logger = require('winston');
-var env = process.env.NODE_ENV || 'development';
-var config = require('../config/config')[env];
-var consumer = new Kafka.GroupConsumer(config.kafka);
-var handlers = {};
-require('./register_events')(handlers);
-
-var dataHandler = function (messageSet, topic, partition) {
-  return Promise.each(messageSet, function (m) {
-    var request = JSON.parse(m.message.value.toString('utf8'));
-    var handler = handlers[request.event_type];
+function dataHandler(messageSet, topic, partition) {
+  return Promise.each(messageSet, (m) => {
+    const request = JSON.parse(m.message.value.toString('utf8'));
+    const handler = handlers[request.event_type];
     if (handler) {
-      handler(request.payload, function (err, data) {
+      handler(request.payload, (err, data) => {
         if (err) {
-          logger.error(err.message)
-        }else {
-          logger.info("Emitted ", request.event_type, " Data: ", data)
+          logger.error(err.message);
+        } else {
+          logger.info('Emitted ', request.event_type, ' Data: ', data);
         }
       });
     }
     return consumer.commitOffset({
-      topic: topic,
-      partition: partition,
+      topic,
+      partition,
       offset: m.offset,
-      metadata: 'optional'
+      metadata: 'optional',
     });
   });
-};
+}
 
-var strategies = [{
+const strategies = [{
   strategy: strategyName,
-  subscriptions: subscriptions,
-  handler: dataHandler
+  subscriptions,
+  handler: dataHandler,
 }];
 
-module.exports = {
-  consumer: consumer,
-  strategies: strategies
+module.exports.start = () => {
+  dns.lookup('kafka-cluster-svc', { all: true, family: 4 }, (err, addresses) => {
+    if (err) throw err;
+
+    const peers = [];
+    addresses.forEach((name) => {
+      peers.push(`${name.address}:9092`);
+    });
+    process.env.KAFKA_PEERS = peers.join(',');
+    logger.info(`kafka peers: ${process.env.KAFKA_PEERS}`);
+
+    consumer = new Kafka.GroupConsumer({
+      groupId,
+      clientId: process.env.KAFKA_CLIENT_ID,
+      connectionString: process.env.KAFKA_PEERS,
+    });
+    consumer.init(strategies);
+  });
 };

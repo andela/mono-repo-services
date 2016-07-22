@@ -1,11 +1,9 @@
-'use strict';
-
 module.exports = {
-  up: function (queryInterface, Sequelize) {
+  up(queryInterface, Sequelize) {
     return queryInterface.addColumn('sample_models', 'model_field_3', { type: Sequelize.STRING });
   },
 
-  down: function (queryInterface) {
+  down(queryInterface) {
     return queryInterface.removeColumn('sample_models', 'model_field_3');
-  }
+  },
 };

@@ -1,25 +1,13 @@
-'use strict';
-
-var models = require('../models');
-var logger = require('winston');
-var data;
-
-var extractData = function (payload) {
-  // extract and parse data from payload object
-};
-
-var processData = function (data) {
-  // process data and return result
-};
+const models = require('../models');
+const logger = require('winston');
 
 module.exports = {
-  sampleEvent: function (payload, cb) {
-    // extract data from payload and process, then pass response back in callback
-    data = extractData(payload);
-    processData(data).then(function (result) {
+  sampleEvent(payload, cb) {
+    // extract data from payload if necessary
+    models.Sample.create(payload).then((result) => {
       logger.info(result);
       cb(null, result);
-    }).catch(function (err) {
+    }).catch((err) => {
       logger.error(err);
       cb(err);
     });

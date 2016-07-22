@@ -1,44 +1,36 @@
-'use strict';
+const gulp = require('gulp');
+const istanbul = require('gulp-istanbul');
+const mocha = require('gulp-mocha');
+const models = require('./models');
+const coveralls = require('gulp-coveralls');
+const exit = require('gulp-exit');
+const server = require('./server');
 
-var gulp = require('gulp'),
-  istanbul = require('gulp-istanbul'),
-  mocha = require('gulp-mocha'),
-  shell = require('gulp-shell'),
-  models = require('./models'),
-  nodemon = require('gulp-nodemon'),
-  coveralls = require('gulp-coveralls'),
-  exit = require('gulp-exit'),
-  server = require('./server');
-
-gulp.task('coverage-setup', function () {
-  return gulp.src(['./controllers/*.js', './models/*.js', './event_handlers/*.js'])
+gulp.task('coverage-setup', () => (
+  gulp.src(['./controllers/*.js', './models/*.js', './event_handlers/*.js'])
     .pipe(istanbul())
-    .pipe(istanbul.hookRequire());
-});
+    .pipe(istanbul.hookRequire())
+));
 
-gulp.task('coveralls', function () {
-  gulp.src('./test/coverage/lcov.info')
+gulp.task('coveralls', () => (
+  gulp.src('./tests/coverage/lcov.info')
     .pipe(coveralls())
-    .pipe(exit());
-});
+    .pipe(exit())
+));
 
-gulp.task('db:create', function () {
-  return models.sequelize.sync().then(exit());
-});
+gulp.task('db:create', () => models.sequelize.sync().then(exit()));
 
-gulp.task('start:server', function () {
-  return server.start();
-});
+gulp.task('start:server', () => server.start());
 
-gulp.task('server:test', ['db:create', 'coverage-setup'], function () {
-  return gulp.src(['./test/controllers/*.js', './test/models/*.js', './test/event_handlers/*.js'])
+gulp.task('server:test', ['db:create', 'coverage-setup'], () => (
+  gulp.src(['./tests/controllers/*.js', './tests/models/*.js', './tests/event_handlers/*.js'])
     .pipe(mocha())
     .pipe(istanbul.writeReports({
-      dir: './test/coverage'
-    }));
-});
+      dir: './tests/coverage',
+    }))
+));
 
-gulp.task('test', ['start:server', 'server:test'], function () {
+gulp.task('test', ['start:server', 'server:test'], () => {
   server.forceShutdown();
   exit();
   process.exit(0);

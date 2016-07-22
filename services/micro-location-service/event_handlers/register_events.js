@@ -2,8 +2,10 @@
  * Register all event handlers here
  */
 
-var sampleHandler = require('./sampleHandler');
+const sampleHandler = require('./sampleHandler');
 
-module.exports = function(handlers) {
-  handlers['sampleEvent'] = sampleHandler.sampleEvent;
-}
+module.exports = () => {
+  const handlers = {};
+  handlers.sampleEvent = sampleHandler.sampleEvent;
+  return handlers;
+};

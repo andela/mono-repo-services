@@ -1,5 +1,3 @@
-'use strict';
-
 /*
 Sample Controller for a sample Microservice
 
@@ -9,24 +7,24 @@ models: database models
 kafka_producer: to emit events that would be transmitted to the kafka message broker
  */
 
-var _ = require('lodash');
-var models = require('../models');
-var producer = require('../kafka_producer');
+// const _ = require('lodash');
+const models = require('../models');
+const producer = require('../kafka_producer');
 
 module.exports = {
-  create: function (call, callback) {
+  create(call, callback) {
     /*
     receive and process payload from request,
     use _.pick to filter out unnecessary fields from call.request object
      */
-    var payload = call.request;
+    const payload = call.request;
 
     // package data to be sent to message broker
-    var data = {
+    const data = {
       event_type: '{event_name}',
-      payload: payload
+      payload,
     };
-
+    const timestamp = new Date();
     /**
      * Emits events that are sent to the Kafka message broker
      * @param   {obj} [data] packaged payload to be sent to message broker
@@ -34,71 +32,73 @@ module.exports = {
      * @param   {obj} [response] the response returned in the kafka_producer function callback
      * @param   {obj} [error] the error returned in the kafka_producer function callback
      */
-    producer.emit(data, timestamp, function (err, response) {
+    producer.emit(data, timestamp, (err, response) => {
       callback(err, response);
     });
   },
 
-  update: function (call, callback) {
-    var data, payload;
+  update(call, callback) {
+    let data;
+    let payload;
 
     // find record to be updated
-    models.{model_name}.findById(call.request.id).then(function (resource) {
-
+    models.Sample.findById(call.request.id).then((resource) => {
       // receive and process payload from request,
       payload = call.request;
-
-      //package data to be sent to message broker
-      data = {
-        event_type: '{event_name}',
-        payload: payload
-      };
-
-      producer.emit(data, timestamp function (err, response) {
-        callback(err, response);
-      });
-    });
-  },
-
-  delete: function (call, callback) {
-    var data, payload;
-
-    // find record to be deleted
-    models.{model_name}.findById(call.request.id).then(function (resource) {
-
-      // receive and process payload from request
-      payload = call.request;
+      const timestamp = resource.CreatedAt;
 
       // package data to be sent to message broker
       data = {
         event_type: '{event_name}',
-        payload: payload
+        payload,
       };
 
-      producer.emit(data, timestamp, function (err, response) {
+      producer.emit(data, timestamp, (err, response) => {
         callback(err, response);
       });
     });
   },
 
-  find: function (call, callback) {
-    models.{model_name}.findById(call.request.id).then(function (resource) {
+  delete(call, callback) {
+    let data;
+    let payload;
+
+    // find record to be deleted
+    models.Sample.findById(call.request.id).then((resource) => {
+      // receive and process payload from request
+      payload = call.request;
+      const timestamp = resource.CreatedAt;
+
+      // package data to be sent to message broker
+      data = {
+        event_type: '{event_name}',
+        payload,
+      };
+
+      producer.emit(data, timestamp, (err, response) => {
+        callback(err, response);
+      });
+    });
+  },
+
+  find(call, callback) {
+    models.Sample.findById(call.request.id).then((resource) => {
       if (resource) {
         // process and return
         callback(null, resource);
       } else {
         callback({ message: 'permission not found' });
       }
-    }).catch(function (err) {
+    }).catch((err) => {
       callback(err);
     });
   },
 
-  list: function (call, callback) {
-    models.{model_name}.findAll().then(function (resources) {
+  list(call, callback) {
+    models.Sample.findAll().then((resources) => {
       callback(null, resources);
-    }).then(function (err) {
+    }).then((err) => {
       callback(err);
     });
-  }
+  },
 };

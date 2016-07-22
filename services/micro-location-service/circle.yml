@@ -1,13 +1,15 @@
-
 machine:
+  node:
+    version: 5.8.0
   environment:
+    NODE_ENV: test
     DATABASE_URL: postgres://ubuntu:@127.0.0.1:5432/circle_test
     COVERALLS_SERVICE_NAME: circle-ci
-    COVERALLS_REPO_TOKEN: 0su27g7JQf6eqoCa58MxzTglh8ICrVoaZ
+    COVERALLS_REPO_TOKEN: blablabla
 dependencies:
-  post:
-    - npm install module-deps
-    - npm install -g gulp
+  pre:
+    - make dependencies
+
 test:
   post:
-    - gulp coveralls
+    - make test
