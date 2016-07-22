@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package users;
+
+service micro {
+    rpc ListRoles (Empty) returns (RoleList) {}
+    rpc CreateRole (Role) returns (Empty) {}
+    rpc EditRole (Role) returns (Empty) {}
+    rpc ShowRole (Id) returns (Role) {}
+    rpc AssignRole (AssignRequest) returns (Empty) {}
+    rpc UnAssignRole (AssignRequest) returns (Empty) {}
+
+    rpc ListUsers (FetchUsersParams) returns(AllUsers) {}
+    rpc FetchUser (Id) returns(User) {}
+    rpc UpdateUser (User) returns(Empty) {}
+    rpc SuspendUser (Id) returns(Empty) {}
+    rpc RestoreUser (Id) returns(Empty) {}
+    rpc CreateUser (User) returns(Empty) {}
+
+    rpc FindOrCreateUser(User) returns (User) {}
+}
+
+message Empty {}
+
+message Permission {
+  int32 id = 1;
+  string name = 2;
+  string key = 3;
+  int32 role_id = 4;
+}
+
+message Role {
+  int32 id = 1;
+  string name = 2;
+  repeated Permission permissions = 3;
+}
+
+message RoleList {
+  repeated Role roles = 1;
+}
+
+message Id {
+  int32 id = 1;
+}
+
+message AssignRequest {
+  int32 role_id = 1;
+  repeated string emails = 2;
+}
+
+message User {
+  int32 id = 1;
+  string email = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string name = 5;
+  string access_token = 6;
+  string picture = 7;
+  string status = 9;
+  repeated Role roles = 10;
+}
+
+message AllUsers {
+  repeated User users = 1;
+}
+
+message FetchUsersParams {
+  int32 limit = 1;
+  int32 page = 2;
+  string orderBy = 3;
+  string name = 4;
+  string direction = 6;
+  string status = 7;
+  repeated int32 role_id = 8;
+}

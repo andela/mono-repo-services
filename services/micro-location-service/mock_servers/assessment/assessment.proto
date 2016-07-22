@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+package assessment;
+
+service micro {
+  rpc CreateScore (ScoreRequest) returns (Empty) {}
+  rpc ScoreEvaluators (Empty) returns (EvaluatorList) {}
+  rpc GetScore (ScoreIdRequest) returns (Score) {}
+  rpc ListScores (ScoreQuery) returns (ScoreList) {}
+
+  rpc CreateSkill (Skill) returns (Empty) {}
+  rpc DeleteSkill (SkillIdRequest) returns (Empty) {}
+  rpc UpdateSkill (SkillRequest) returns (Empty) {}
+  rpc GetSkill (SkillIdRequest) returns (Skill) {}
+  rpc ListSkills (Empty) returns (SkillList) {}
+
+  rpc CreateScoreGuideline (scoreGuidelineRequest) returns (Empty) {}
+  rpc UpdateScoreGuideline (scoreGuidelineEditRequests) returns (Empty) {}
+  rpc GetScoreGuideline (scoreGuidelineIdRequest) returns (scoreGuideline) {}
+  rpc ListScoreGuidelines (Empty) returns (scoreGuidelineList) {}
+  rpc FetchScoreGuidelines (scoreGuidelineIds) returns (scoreGuidelineList) {}
+}
+
+enum SkillType {
+  SOFT = 0;
+  TECH = 1;
+  TOOL = 2;
+  LANG = 3;
+}
+
+enum ScoreType {
+  NONE = 0;
+  STAFF = 1;
+  PEER = 2;
+  SELF = 3;
+}
+
+enum Level {
+  BOOTCAMP = 0;
+  D0A_MONTH_ONE = 1;
+  D0B_SIMULATIONS = 2;
+  D1_DEVELOPER = 3;
+  D2_DEVELOPER = 4;
+  D3_DEVELOPER = 5;
+  D4_DEVELOPER = 6;
+}
+
+message ScoreIdRequest {
+  int32 id = 1;
+}
+
+message ScoreQuery {
+  int32 skill_id = 1;
+  ScoreType type = 2;
+  int32 limit = 3;
+  int32 page = 4;
+  string evaluator_uid = 5;
+  string evaluatee_uid = 6;
+  string start_date = 7;
+  string end_date = 8;
+}
+
+message Score {
+  int32 id = 1;
+  string evaluatee_uid = 2;
+  string evaluator_uid = 3;
+  string evaluator_name = 4;
+  int32 value = 5;
+  string comment = 6;
+  int32 skill_id = 7;
+  string created_at = 8;
+  ScoreType type = 9;
+  SkillRequest skill = 10;
+  string updated_at = 11;
+}
+
+message ScoreRequest {
+  repeated Score scores = 1;
+}
+
+message ScoreList {
+  int32 total = 1;
+  repeated Score scores = 2;
+}
+
+message Evaluator {
+  string evaluator_uid = 1;
+  string evaluator_name = 2;
+}
+
+message EvaluatorList {
+  repeated Evaluator evaluators = 1;
+}
+
+message SkillRequest {
+  int32 id = 1;
+  string name = 2;
+  SkillType type = 3;
+}
+
+message SkillIdRequest {
+  int32 id = 1;
+}
+
+message Skill {
+  int32 id = 1;
+  string name = 2;
+  SkillType type = 3;
+  repeated scoreGuidelineRequest scoreGuidelines = 4;
+}
+
+message Empty {}
+
+message SkillList {
+  repeated Skill skills = 1;
+}
+
+message scoreGuidelineRequest {
+  int32 id = 1;
+  Level level = 2;
+  int32 score = 3;
+  string description = 4;
+  int32 skill_id = 5;
+}
+
+message scoreGuidelineEditRequest {
+  int32 id = 1;
+  string description = 2;
+}
+
+message scoreGuidelineEditRequests {
+  repeated scoreGuidelineEditRequest scoreGuidelines = 1;
+}
+
+message scoreGuidelineIdRequest {
+  int32 id = 1;
+}
+
+message scoreGuidelineIds {
+  repeated int32 ids = 1;
+}
+
+message scoreGuideline {
+  int32 id = 1;
+  Level level = 2;
+  int32 score = 3;
+  string description = 4;
+  int32 skill_id = 5;
+  SkillRequest skill = 6;
+}
+
+message scoreGuidelineList {
+  repeated scoreGuideline scoreGuidelines = 1;
+}
