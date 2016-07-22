@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package cohorts;
+
+service micro {
+  rpc List (Empty) returns (AllCohorts) {}
+  rpc Get (Id) returns (Cohort) {}
+  rpc Create (Cohort) returns (Empty) {}
+  rpc Update (Cohort) returns (Empty) {}
+  rpc Delete (Id) returns (Empty) {}
+  rpc InviteCode (Id) returns (Cohort) {}
+}
+
+message Empty {}
+
+message Cohort {
+  string id = 1;
+  string color = 2;
+  bool hidden = 3;
+  string invite_code = 4;
+  string name = 5;
+  string story = 6;
+  string started_at = 7;
+  string started_level_id = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  string location_id = 11;
+  Location location = 12;
+  string auditor_id = 13;
+  string auditor_name = 14;
+}
+
+message Location {
+  string id = 1;
+  string name = 2;
+}
+
+message AllCohorts {
+  repeated Cohort cohorts = 1;
+}
+
+message Id {
+  string id = 1;
+}
