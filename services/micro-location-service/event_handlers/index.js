@@ -17,6 +17,7 @@ const dns = require('dns');
 const Promise = require('bluebird');
 const logger = require('winston');
 const strategyName = '{strategy_name}';
+const producer = require('../kafka_producer');
 const groupId = '{group_id}';
 const subscriptions = ['{topic_name}'];
 const handlers = require('./register_events');
@@ -67,5 +68,6 @@ module.exports.start = () => {
       connectionString: process.env.KAFKA_PEERS,
     });
     consumer.init(strategies);
+    producer.start();
   });
 };

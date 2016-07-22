@@ -9,19 +9,20 @@ const config = require('./config/config')[env];
 const kafka = require('no-kafka');
 const moment = require('moment');
 const logger = require('winston');
-const producer = new kafka.Producer({
-  clientId: config.kafka.clientId,
-  connectionString: config.kafka.connectionString,
-  partitioner(topicName, topicPartitions, message) {
-    const numOfPartitions = topicPartitions.length;
-    const key = message.key;
-    return key % numOfPartitions;
-  },
-});
+let producer;
 
 
 module.exports = {
   start() {
+    producer = new kafka.Producer({
+      clientId: config.kafka.clientId,
+      connectionString: config.kafka.connectionString,
+      partitioner(topicName, topicPartitions, message) {
+        const numOfPartitions = topicPartitions.length;
+        const key = message.key;
+        return key % numOfPartitions;
+      },
+    });
     producer.init().then(() => logger.info('Producer is ready'));
   },
   emit(message, timestamp, cb) {

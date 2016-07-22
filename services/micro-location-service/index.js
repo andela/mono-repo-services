@@ -1,6 +1,5 @@
 const server = require('./server');
 const eventHandlers = require('./event_handlers');
-const producer = require('./kafka_producer');
 const hystrixMetrics = require('./hystrix_metrics');
 const logger = require('winston');
 const pg = require('pg');
@@ -22,7 +21,6 @@ client.connect((err) => (
 
 process.env.DATABASE_URL = `postgres://${user}:${password}@${host}:5432/${dbName}`;
 
-producer.start();
 eventHandlers.start();
 server.start();
 hystrixMetrics.start();
