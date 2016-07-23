@@ -3,15 +3,13 @@ const eventHandlers = require('./event_handlers');
 const hystrixMetrics = require('./hystrix_metrics');
 const logger = require('winston');
 const pg = require('pg');
+const models = require('./models');
 
-const user = process.env.POSTGRES_USER;
-const password = process.env.POSTGRES_PASSWORD;
-const host = process.env.POSTGRES_HOST;
 const dbName = process.env.POSTGRES_DB;
-const connectionString = `postgres://${user}:${password}@${host}:5432/template1?sslmode=disable`;
-const client = new pg.Client(connectionString);
+const client = new pg.Client(process.env.TEMPLATE_DB);
 client.connect((err) => (
-  client.query(`CREATE DATABASE ${dbName}`, (createErr) => {
+  client.query(`CREATE DATABASE ${dbName}`, (createErr, result) => {
+    logger.info("Got in here with result", result);
     if (err) {
       logger.info('FAILED TO CREATE DB: ', createErr);
     }
@@ -19,8 +17,7 @@ client.connect((err) => (
   })
 ));
 
-process.env.DATABASE_URL = `postgres://${user}:${password}@${host}:5432/${dbName}`;
-
+models.sequelize.sync();
 eventHandlers.start();
 server.start();
 hystrixMetrics.start();

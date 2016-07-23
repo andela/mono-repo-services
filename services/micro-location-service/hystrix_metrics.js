@@ -17,6 +17,6 @@ function hystrixStreamResponse(request, response) {
 exports.start = () => {
   app.get('/', hystrixStreamResponse);
   if (process.env.NODE_ENV !== 'test') {
-    app.listen(process.env.PORT || 8080);
+    app.listen(process.env.PORT || 9000);
   }
 };
