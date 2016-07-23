@@ -7,27 +7,23 @@
  */
 const development = {
   database: {
-    url: process.env.DATABASE_URL || `postgres://
-    {db_user}:{db_password}@{db_host}:{db_port}/{db_name}`,
+    url: process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/db_name_dev',
   },
-  service: '{host}:{port}',
+  service: '0.0.0.0:50050',
 };
 
 const production = {
   database: {
     url: process.env.DATABASE_URL,
-    port: process.env.DATABASE_PORT,
-    host: process.env.DATABASE_HOST,
   },
-  service: '{host}:{port}',
+  service: '0.0.0.0:50050',
 };
 
 const test = {
   database: {
-    url: process.env.DATABASE_URL || `postgres://{db_user}:
-    {db_password}@{db_host}:{db_port}/{db_name}`,
+    url: process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/db_name_test',
   },
-  service: '{host}:{port}',
+  service: '0.0.0.0:50050',
 };
 
 const config = {
