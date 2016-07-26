@@ -8,13 +8,11 @@
  * config: config file that holds server config details
  * sampleController: controllers that handles the microservice endpoints
  */
-const env = process.env.NODE_ENV || 'development';
-const config = require('../config/config')[env];
 const grpc = require('grpc');
 const proto = grpc.load('mock_servers/sample/sample.proto');
 const server = new grpc.Server();
-
 const sampleController = require('../controllers/sample_controller');
+global.config = require('konfig')({ path: '../config' });
 
 // setup microservice endpoints and controller functions that processes requests to those endpoints
 server.addProtoService(proto.authorization.AuthorizationService.service, {
@@ -26,6 +24,6 @@ server.addProtoService(proto.authorization.AuthorizationService.service, {
 });
 
 // initialize server
-server.bind(config.service, grpc.ServerCredentials.createInsecure());
+server.bind(global.app.service, grpc.ServerCredentials.createInsecure());
 
 module.exports = server;

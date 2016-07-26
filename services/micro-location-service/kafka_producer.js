@@ -8,6 +8,7 @@ const kafka = require('no-kafka');
 const _ = require('lodash');
 const moment = require('moment');
 const logger = require('winston');
+const topicName = 'fellowship-role-topic';
 let producer;
 
 /* JavaScript does bitwise operations (like XOR, above) on 32-bit signed
@@ -29,7 +30,7 @@ module.exports = {
     producer = new kafka.Producer({
       clientId: process.env.KAFKA_CLIENT_ID,
       connectionString: process.env.KAFKA_PEERS,
-      partitioner(topicName, topicPartitions, message) {
+      partitioner(topic, topicPartitions, message) {
         const numOfPartitions = topicPartitions.length;
         const key = message.key;
         return key % numOfPartitions;
@@ -55,7 +56,7 @@ module.exports = {
     }
 
     return producer.send({
-      topic: 'fellowship-role-topic',
+      topic: topicName,
       message: {
         key,
         value: JSON.stringify(value),

@@ -2,14 +2,16 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const lodash = require('lodash');
-const logger = require('winston');
 const basename = path.basename(module.filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require(`${__dirname}/../config/database.json`)[env];
+const config = require('../config/database')[env];
 const db = {};
 const options = {
-  logging: logger.info,
+  /* eslint-disable no-console */
+  logging: console.log,
+  /* eslint-enable no-console */
   benchmark: true,
+  dialect: config.dialect,
 };
 
 const sequelize = new Sequelize(config.url, Object.assign({}, config, options));

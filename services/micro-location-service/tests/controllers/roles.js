@@ -3,10 +3,10 @@ const rolesProto = grpc.load('mock_servers/fellowship_roles/fellowship_roles.pro
 const models = require('../../models');
 const should = require('should');
 const logger = require('winston');
+const config = require('konfig')({ path: '../../config' });
 
-const config = require('../../config/config')[process.env.NODE_ENV];
 /* eslint-disable new-cap */
-const client = new rolesProto.fellowship_roles.micro(config.service,
+const client = new rolesProto.fellowship_roles.micro(config.app.service,
   grpc.credentials.createInsecure());
   /* eslint-disable new-cap */
 

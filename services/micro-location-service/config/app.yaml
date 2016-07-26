@@ -1,0 +1,11 @@
+default:
+  service: 0.0.0.0:50050
+
+development:
+
+test:
+
+production: &production
+
+staging:
+  <<: *production

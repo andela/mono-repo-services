@@ -36,6 +36,7 @@
     "gulp-shell": "^0.5.2",
     "hystrixjs": "0.0.3",
     "istanbul": "^0.4.3",
+    "konfig": "^0.2.1",
     "lodash": "^4.11.1",
     "mock-require": "^1.3.0",
     "moment": "^2.13.0",

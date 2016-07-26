@@ -7,6 +7,7 @@ const exit = require('gulp-exit');
 const server = require('./mock_servers/kafka/server');
 const dependentServer = require('./mock_servers/{dependency}/server');
 const producer = require('./kafka_producer');
+global.config = require('konfig')();
 
 gulp.task('coverage-setup', () => (
   gulp.src(['./controllers/*.js', './models/*.js', './event_handlers/*.js'])

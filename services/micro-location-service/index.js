@@ -4,7 +4,6 @@ const hystrixMetrics = require('./hystrix_metrics');
 const logger = require('winston');
 const pg = require('pg');
 const models = require('./models');
-
 const dbName = process.env.POSTGRES_DB;
 const templateDB = process.env.TEMPLATE_DB;
 
