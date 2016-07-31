@@ -12,6 +12,7 @@
  * assign unique strategy_name to the strategyName variable
  * assign an array of topics to the subscriptions variable
  */
+const config = require('konfig')();
 const Kafka = require('no-kafka');
 const dns = require('dns');
 const Promise = require('bluebird');
@@ -52,7 +53,7 @@ const strategies = [{
 }];
 
 module.exports.start = () => {
-  dns.lookup('kafka-cluster-svc', { all: true, family: 4 }, (err, addresses) => {
+  dns.lookup(config.app.kafkaCluster, { all: true, family: 4 }, (err, addresses) => {
     if (err) throw err;
 
     const peers = [];
@@ -71,3 +72,4 @@ module.exports.start = () => {
     producer.start();
   });
 };
+

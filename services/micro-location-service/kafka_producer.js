@@ -8,7 +8,7 @@ const kafka = require('no-kafka');
 const _ = require('lodash');
 const moment = require('moment');
 const logger = require('winston');
-const topicName = 'fellowship-role-topic';
+const topicName = '{topic-name}';
 let producer;
 
 /* JavaScript does bitwise operations (like XOR, above) on 32-bit signed

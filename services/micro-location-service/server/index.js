@@ -12,7 +12,7 @@ const grpc = require('grpc');
 const proto = grpc.load('mock_servers/sample/sample.proto');
 const server = new grpc.Server();
 const sampleController = require('../controllers/sample_controller');
-global.config = require('konfig')({ path: '../config' });
+global.config = require('konfig')();
 
 // setup microservice endpoints and controller functions that processes requests to those endpoints
 server.addProtoService(proto.authorization.AuthorizationService.service, {
@@ -24,6 +24,6 @@ server.addProtoService(proto.authorization.AuthorizationService.service, {
 });
 
 // initialize server
-server.bind(global.app.service, grpc.ServerCredentials.createInsecure());
+server.bind(global.config.app.service, grpc.ServerCredentials.createInsecure());
 
 module.exports = server;

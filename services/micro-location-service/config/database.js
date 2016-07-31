@@ -6,21 +6,22 @@
  * e.g '192.168.99.100:32769'
  */
 const development = {
-  url: 'postgres://postgres:password@localhost:5432/db_name_dev',
-  dialect: 'postgres',
-  service: '0.0.0.0:50050',
+  database: {
+    url: process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/db_name_dev',
+    dialect: 'postgres',
+  },
 };
 
 const production = {
   url: process.env.DATABASE_URL,
   dialect: 'postgres',
-  service: '0.0.0.0:50050',
 };
 
 const test = {
-  url: process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/db_name_test',
-  dialect: 'postgres',
-  service: '0.0.0.0:50050',
+  database: {
+    url: process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/db_name_test',
+    dialect: 'postgres',
+  },
 };
 
 const config = {

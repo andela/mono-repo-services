@@ -11,10 +11,9 @@ const options = {
   logging: console.log,
   /* eslint-enable no-console */
   benchmark: true,
-  dialect: config.dialect,
+  dialect: config.database.dialect,
 };
-
-const sequelize = new Sequelize(config.url, Object.assign({}, config, options));
+const sequelize = new Sequelize(config.database.url, Object.assign({}, options));
 
 fs
   .readdirSync(__dirname)

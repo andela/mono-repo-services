@@ -1,6 +1,6 @@
 machine:
   node:
-    version: 6.1.0
+    version: 6.3.0
   environment:
     NODE_ENV: test
     DATABASE_URL: postgres://ubuntu:@127.0.0.1:5432/circle_test
@@ -9,7 +9,8 @@ machine:
 dependencies:
   pre:
     - make dependencies
-
 test:
+  pre:
+    - gulp db:migrate
   post:
-    - make test
+    - gulp coveralls

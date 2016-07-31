@@ -1,11 +1,14 @@
 default:
-  service: 0.0.0.0:50050
+  service: 0.0.0.0:{service_port_on_api_gateway}
+  kafkaCluster: '127.0.0.1'
 
 development:
 
 test:
+  service: '0.0.0.0:50050'
 
 production: &production
+  kafkaCluster: 'kafka-cluster-svc'
 
 staging:
   <<: *production
