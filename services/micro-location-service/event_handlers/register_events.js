@@ -2,10 +2,12 @@
  * Register all event handlers here
  */
 
-const sampleHandler = require('./sampleHandler');
+const locationHandler = require('./locationsHandler');
 
 module.exports = () => {
   const handlers = {};
-  handlers.sampleEvent = sampleHandler.sampleEvent;
+  handlers.LocationCreatedEvent = locationHandler.createLocation;
+  handlers.LocationUpdatedEvent = locationHandler.updateLocation;
+  handlers.LocationDeletedEvent = locationHandler.deleteLocation;
   return handlers;
 };

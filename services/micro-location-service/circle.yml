@@ -5,12 +5,14 @@ machine:
     NODE_ENV: test
     DATABASE_URL: postgres://ubuntu:@127.0.0.1:5432/circle_test
     COVERALLS_SERVICE_NAME: circle-ci
-    COVERALLS_REPO_TOKEN: blablabla
+    COVERALLS_REPO_TOKEN: htjWluPB25Y9AOtw9GnftNiAxzV5WSdri
+checkout:
+  post:
+    - git submodule sync
+    - git submodule update --init
 dependencies:
   pre:
     - make dependencies
 test:
-  pre:
-    - gulp db:migrate
   post:
     - gulp coveralls

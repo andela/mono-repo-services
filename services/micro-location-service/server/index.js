@@ -6,24 +6,27 @@
  * proto: load the proto file that contains the interface definitions for the microservice
  * server: the grpc server client object
  * config: config file that holds server config details
- * sampleController: controllers that handles the microservice endpoints
+ * locationsController: controllers that handles the microservice endpoints
  */
 const grpc = require('grpc');
-const proto = grpc.load('mock_servers/sample/sample.proto');
+const proto = grpc.load('shared/locations/locations.proto');
 const server = new grpc.Server();
-const sampleController = require('../controllers/sample_controller');
-global.config = require('konfig')();
+const locationsController = require('../controllers/locations_controller');
+require('dotenv').config({ silent: true });
+// global.config = require('config')();
 
 // setup microservice endpoints and controller functions that processes requests to those endpoints
-server.addProtoService(proto.authorization.AuthorizationService.service, {
-  createSampleResource: sampleController.create,
-  updateSampleResource: sampleController.update,
-  deleteSampleResource: sampleController.delete,
-  findSampleResource: sampleController.find,
-  listSampleResource: sampleController.list,
+server.addProtoService(proto.locations.micro.service, {
+  list: locationsController.index,
+  get: locationsController.show,
+  create: locationsController.create,
+  update: locationsController.update,
+  delete: locationsController.destroy,
+  getAllLocationsDetails: locationsController.allLocationsDetails,
+  getLocationDetails: locationsController.getLocationDetails,
 });
 
 // initialize server
-server.bind(global.config.app.service, grpc.ServerCredentials.createInsecure());
+server.bind(process.env.SERVICE_URL, grpc.ServerCredentials.createInsecure());
 
 module.exports = server;

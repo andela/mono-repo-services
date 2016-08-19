@@ -12,16 +12,15 @@
  * assign unique strategy_name to the strategyName variable
  * assign an array of topics to the subscriptions variable
  */
-const config = require('konfig')();
 const Kafka = require('no-kafka');
 const dns = require('dns');
 const Promise = require('bluebird');
 const logger = require('winston');
-const strategyName = '{strategy_name}';
+const strategyName = 'LocationStrategy';
 const producer = require('../kafka_producer');
-const groupId = '{group_id}';
-const subscriptions = ['{topic_name}'];
-const handlers = require('./register_events');
+const groupId = 'location-service-group';
+const subscriptions = ['location-topic'];
+const handlers = require('./register_events')();
 let consumer;
 
 function dataHandler(messageSet, topic, partition) {
@@ -53,7 +52,7 @@ const strategies = [{
 }];
 
 module.exports.start = () => {
-  dns.lookup(config.app.kafkaCluster, { all: true, family: 4 }, (err, addresses) => {
+  dns.lookup(process.env.KAFKA_URL, { all: true, family: 4 }, (err, addresses) => {
     if (err) throw err;
 
     const peers = [];
@@ -72,4 +71,3 @@ module.exports.start = () => {
     producer.start();
   });
 };
-

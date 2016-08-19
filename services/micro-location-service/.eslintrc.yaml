@@ -3,5 +3,10 @@ globals:
   describe: true
   it: true
   beforeEach: true
+  afterEach: true
   before: true
   after: true
+rules:
+  no-param-reassign: 0
+  new-cap: 0
+  import/no-extraneous-dependencies: 0

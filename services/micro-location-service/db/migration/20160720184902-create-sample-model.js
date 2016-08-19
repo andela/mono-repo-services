@@ -1,23 +1,23 @@
 module.exports = {
   up(queryInterface, Sequelize) {
-    return queryInterface.createTable('sample_models', {
+    return queryInterface.createTable('locations', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      model_field_1: {
+      time_zone: {
         type: Sequelize.STRING,
       },
-      model_field_2: {
+      name: {
         type: Sequelize.STRING,
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
@@ -25,6 +25,6 @@ module.exports = {
   },
 
   down(queryInterface) {
-    return queryInterface.dropTable('sample_models');
+    return queryInterface.dropTable('locations');
   },
 };

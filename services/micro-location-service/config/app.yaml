@@ -1,5 +1,5 @@
 default:
-  service: 0.0.0.0:{service_port_on_api_gateway}
+  service: 0.0.0.0:50062
   kafkaCluster: '127.0.0.1'
 
 development:

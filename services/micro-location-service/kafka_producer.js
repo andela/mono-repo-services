@@ -5,10 +5,9 @@
  * assign producer_id to producerId variable
  */
 const kafka = require('no-kafka');
-const _ = require('lodash');
-const moment = require('moment');
 const logger = require('winston');
-const topicName = '{topic-name}';
+const topicName = 'location-topic';
+const fancyID = require('./shared/fancyid');
 let producer;
 
 /* JavaScript does bitwise operations (like XOR, above) on 32-bit signed
@@ -32,40 +31,37 @@ module.exports = {
       connectionString: process.env.KAFKA_PEERS,
       partitioner(topic, topicPartitions, message) {
         const numOfPartitions = topicPartitions.length;
-        const key = message.key;
+        const key = hashKey(message.key);
         return key % numOfPartitions;
       },
     });
-    producer.init().then(() => logger.info('Producer is ready'));
+    producer.init().then(() => logger.info('producer is ready'));
   },
-  emit(message, timestamp, altkey, cb) {
-    let key;
-    let createdAt;
-    const value = message;
-    if (timestamp) {
-      key = moment(timestamp).unix();
-    } else if (altkey) {
-      key = hashKey(altkey);
-    } else {
-      key = moment.now();
-      createdAt = moment(key).format('YYYY-MM-DD HH:m:s');
-      if (_.isPlainObject(message.payload)) {
-        value.payload.created_at = createdAt;
-        value.payload.updated_at = createdAt;
+  emitModel(model, message, cb) {
+    message.payload.id = message.payload.id || fancyID();
+    model.build(message.payload).validate().then((validateErr) => {
+      if (validateErr) {
+        logger.error(validateErr.message);
+        cb(validateErr);
+      } else {
+        this.emit(message, cb);
       }
-    }
-
-    return producer.send({
+    });
+  },
+  emit(message, cb) {
+    // normally payload at this point should have an id. But if not, generate a fancy id
+    message.payload.id = message.payload.id || fancyID();
+    producer.send({
       topic: topicName,
       message: {
-        key,
-        value: JSON.stringify(value),
+        key: message.payload.id,
+        value: JSON.stringify(message),
       },
     }).then(() => {
       logger.info(`Event Emitted: ${message.event_type}`, message.payload);
       cb(null, {});
     }).catch((err) => {
-      logger.error(`Kafka Error Occurred on ${message.event_typ} Emitted`, err);
+      logger.error(`Kafka Error Occurred on ${message.event_type} Emitted`, err);
       cb(err);
     });
   },
