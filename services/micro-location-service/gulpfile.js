@@ -42,8 +42,9 @@ gulp.task('start:producer', () => producer.start());
 gulp.task('server:test', ['coverage-setup'], () => (
   gulp.src(['./tests/controllers/*.js', './tests/models/*.js', './tests/event_handlers/*.js'])
     .pipe(mocha())
-    .on('error', (err) => {
-      console.log(err);
+    .on('error', () => {
+      usersServer.forceShutdown();
+      levelsServer.forceShutdown();
     })
     .pipe(istanbul.writeReports({
       dir: './coverage',

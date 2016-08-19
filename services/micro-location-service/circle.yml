@@ -10,9 +10,6 @@ checkout:
   post:
     - git submodule sync
     - git submodule update --init
-dependencies:
-  pre:
-    - make dependencies
 test:
   post:
     - gulp coveralls

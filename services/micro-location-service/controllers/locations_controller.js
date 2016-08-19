@@ -123,7 +123,6 @@ module.exports = {
            });
            step(null, result);
          }).catch(err => {
-           console.log(err)
            step(err);
          });
       },
