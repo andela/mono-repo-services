@@ -6,7 +6,7 @@
  * e.g '192.168.99.100:32769'
  */
 const development = {
-  url: process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/location_dev',
+  url: process.env.DATABASE_URL,
   dialect: 'postgres',
 };
 
@@ -16,7 +16,7 @@ const production = {
 };
 
 const test = {
-  url: process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/location_test',
+  url: process.env.DATABASE_URL,
   dialect: 'postgres',
 };
 

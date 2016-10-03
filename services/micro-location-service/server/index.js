@@ -12,7 +12,9 @@ const grpc = require('grpc');
 const proto = grpc.load('shared/locations/locations.proto');
 const server = new grpc.Server();
 const locationsController = require('../controllers/locations_controller');
-require('dotenv').config({ silent: true });
+const healthCheck = require('micro-health-check');
+
+global.healthStatus = healthCheck.setStatus;
 // global.config = require('config')();
 
 // setup microservice endpoints and controller functions that processes requests to those endpoints
@@ -26,7 +28,8 @@ server.addProtoService(proto.locations.micro.service, {
   getLocationDetails: locationsController.getLocationDetails,
 });
 
+global.healthStatus('', 1);
+server.addProtoService(healthCheck.service, healthCheck.implementation());
 // initialize server
 server.bind(process.env.SERVICE_URL, grpc.ServerCredentials.createInsecure());
-
 module.exports = server;

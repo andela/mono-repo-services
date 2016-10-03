@@ -3,7 +3,7 @@ const sinon = require('sinon');
 const Q = require('q');
 const grpc = require('grpc');
 const controller = require('../../controllers/locations_controller');
-const models = require('../../models');
+const models = global.models;
 const producer = require('../../kafka_producer');
 
 const locations = [

@@ -1,4 +1,4 @@
-const models = require('../models');
+const models = global.models;
 const logger = require('winston');
 
 module.exports = {
@@ -22,7 +22,7 @@ module.exports = {
     });
   },
 
-  deleteLocation(payload, callback) {
+  destroyLocation(payload, callback) {
     models.Location.destroy({ where: { id: payload.id } })
     .then(() => {
       callback(null, {});

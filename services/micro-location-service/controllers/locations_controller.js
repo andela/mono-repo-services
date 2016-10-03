@@ -1,4 +1,4 @@
-const models = require('../models');
+const models = global.models;
 const logger = require('winston');
 const producer = require('../kafka_producer');
 const _ = require('lodash');
@@ -90,7 +90,7 @@ module.exports = {
           payload: { id: call.request.id },
         };
 
-        producer.emit(message, (err, response) => {
+        producer.emit(message, (err) => {
           callback(err, {});
         });
       } else {

@@ -8,6 +8,6 @@ module.exports = () => {
   const handlers = {};
   handlers.LocationCreatedEvent = locationHandler.createLocation;
   handlers.LocationUpdatedEvent = locationHandler.updateLocation;
-  handlers.LocationDeletedEvent = locationHandler.deleteLocation;
+  handlers.LocationDeletedEvent = locationHandler.destroyLocation;
   return handlers;
 };

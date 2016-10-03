@@ -6,8 +6,9 @@ const mocha = require('gulp-mocha');
 const coveralls = require('gulp-coveralls');
 const shell = require('gulp-shell');
 const exit = require('gulp-exit');
+require('dotenv').config({ silent: true });
+global.models = require('./models');
 const producer = require('./kafka_producer');
-const models = require('./models');
 const usersServer = require('./shared/users/server');
 const levelsServer = require('./shared/levels/server');
 require('dotenv').config();
@@ -33,13 +34,9 @@ gulp.task('coveralls', () => (
     .pipe(exit())
 ));
 
-gulp.task('db:sync', () => {
-  models.sequelize.sync();
-});
-
 gulp.task('start:producer', () => producer.start());
 
-gulp.task('server:test', ['coverage-setup'], () => (
+gulp.task('server:test', ['db:migrate', 'coverage-setup'], () => (
   gulp.src(['./tests/controllers/*.js', './tests/models/*.js', './tests/event_handlers/*.js'])
     .pipe(mocha())
     .on('error', () => {
@@ -51,7 +48,7 @@ gulp.task('server:test', ['coverage-setup'], () => (
     }))
 ));
 
-gulp.task('test', ['db:sync', 'start:dependent', 'server:test'], () => {
+gulp.task('test', ['start:dependent', 'server:test'], () => {
   exit();
   usersServer.forceShutdown();
   levelsServer.forceShutdown();
