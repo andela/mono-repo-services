@@ -6,6 +6,10 @@ machine:
     DATABASE_URL: postgres://ubuntu:@127.0.0.1:5432/circle_test
     COVERALLS_SERVICE_NAME: circle-ci
     COVERALLS_REPO_TOKEN: htjWluPB25Y9AOtw9GnftNiAxzV5WSdri
+    SERVICE_URL: 0.0.0.0:50062
+    TOPIC_NAME: locations-topic
+    LEVELS_SERVICE_URL: 0.0.0.0:50055
+    USERS_SERVICE_URL: 0.0.0.0:50051
 checkout:
   post:
     - git submodule sync

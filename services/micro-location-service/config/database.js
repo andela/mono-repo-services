@@ -23,6 +23,7 @@ const test = {
 const config = {
   development,
   production,
+  minikube: production,
   staging: production,
   test,
 };

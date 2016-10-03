@@ -27,10 +27,10 @@ deploy: push
 
 run:
 	docker run  us.gcr.io/$(PROJECT)/$(IMAGE):$(TAG)
-	
+
 minikube:
 	git submodule update --init
-	docker build -t us.gcr.io/$(PROJECT)/$(IMAGE):minikube .
+	eval $$(minikube docker-env) && docker build -t us.gcr.io/$(PROJECT)/$(IMAGE):minikube .
 
 run:
 	docker run  us.gcr.io/$(PROJECT)/$(IMAGE):$(TAG)

@@ -2,28 +2,28 @@ const models = require('../models');
 const logger = require('winston');
 
 module.exports = {
-  createLocation(data, callback) {
-    models.Location.create(data.payload)
+  createLocation(payload, callback) {
+    models.Location.create(payload)
     .then((location) => {
-      callback(null, location);
+      callback(null, location.id);
     }).catch((err) => {
       logger.error(err.message);
       callback(err);
     });
   },
 
-  updateLocation(data, callback) {
-    models.Location.upsert(data)
+  updateLocation(payload, callback) {
+    models.Location.upsert(payload)
     .then((location) => {
-      callback(null, location);
+      callback(null, location.id);
     }).catch((err) => {
       logger.error(err.message);
       callback(err);
     });
   },
 
-  deleteLocation(data, callback) {
-    models.Location.destroy({ where: { id: data.id } })
+  deleteLocation(payload, callback) {
+    models.Location.destroy({ where: { id: payload.id } })
     .then(() => {
       callback(null, {});
     })

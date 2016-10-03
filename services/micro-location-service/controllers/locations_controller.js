@@ -20,9 +20,9 @@ module.exports = {
   index(call, callback) {
     models.Location.findAll().then((locations) => {
       const result = _.map(locations, location => {
-        const data = _.pick(location, ['id', 'name', 'timezone']);
-        data.createdAt = location.created_at;
-        data.updatedAt = location.updated_at;
+        const data = _.pick(location, ['id', 'name', 'time_zone']);
+        data.created_at = location.created_at.toString();
+        data.updated_at = location.updated_at.toString();
         return data;
       });
       callback(null, result);
@@ -34,8 +34,8 @@ module.exports = {
   show(call, callback) {
     models.Location.findById(call.request.id).then((location) => {
       if (location) {
-        const result = _.pick(location, ['id', 'name', 'timezone']);
-        result.create_at = location.created_at.toString();
+        const result = _.pick(location, ['id', 'name', 'time_zone']);
+        result.created_at = location.created_at.toString();
         result.updated_at = location.updated_at.toString();
         callback(null, result);
       } else {
@@ -48,7 +48,7 @@ module.exports = {
   },
 
   update(call, callback) {
-    const payload = _.pick(call.request, ['id', 'name', 'timezone']);
+    const payload = _.pick(call.request, ['id', 'name', 'time_zone']);
     payload.updated_at = new Date();
 
     models.Location.findById(call.request.id).then((location) => {
@@ -72,7 +72,7 @@ module.exports = {
   },
 
   create(call, callback) {
-    const payload = _.pick(call.request, 'id', 'name', 'timezone');
+    const payload = _.pick(call.request, 'id', 'name', 'time_zone');
     const message = {
       event_type: 'LocationCreatedEvent',
       payload,
@@ -83,15 +83,15 @@ module.exports = {
   },
 
   destroy(call, callback) {
-    models.Location.findById(call.request.id).then((activity) => {
-      if (activity) {
+    models.Location.findById(call.request.id).then((location) => {
+      if (location) {
         const message = {
           event_type: 'LocationDeletedEvent',
           payload: { id: call.request.id },
         };
 
         producer.emit(message, (err, response) => {
-          callback(err, response);
+          callback(err, {});
         });
       } else {
         callback(new Error('location not found'));
