@@ -18,13 +18,10 @@ const usersClient = new usersProto.users.micro(
 
 module.exports = {
   index(call, callback) {
-    models.Location.findAll().then((locations) => {
-      const result = _.map(locations, location => {
-        const data = _.pick(location, ['id', 'name', 'time_zone']);
-        data.created_at = location.created_at.toString();
-        data.updated_at = location.updated_at.toString();
-        return data;
-      });
+    models.Location.findAll({ raw: true }).then((locations) => {
+      const result = locations.map(location => (
+        models.stringifyDates(location)
+      ));
       callback(null, result);
     }).catch((err) => {
       callback(err);
@@ -32,14 +29,12 @@ module.exports = {
   },
 
   show(call, callback) {
-    models.Location.findById(call.request.id).then((location) => {
+    models.Location.findById(call.request.id, { raw: true }).then((location) => {
       if (location) {
-        const result = _.pick(location, ['id', 'name', 'time_zone']);
-        result.created_at = location.created_at.toString();
-        result.updated_at = location.updated_at.toString();
+        const result = models.stringifyDates(location);
         callback(null, result);
       } else {
-        callback(new Error('location not found'));
+        callback({ message: 'location not found', code: grpc.status.NOT_FOUND });
       }
     }).catch((err) => {
       logger.error(err.message);
@@ -48,13 +43,11 @@ module.exports = {
   },
 
   update(call, callback) {
-    const payload = _.pick(call.request, ['id', 'name', 'time_zone']);
-    payload.updated_at = new Date();
-
-    models.Location.findById(call.request.id).then((location) => {
+    const payload = _.pick(call.request, ['id', 'name', 'timeZone']);
+    models.Location.findById(payload.id).then((location) => {
       if (location) {
         const message = {
-          event_type: 'LocationUpdatedEvent',
+          eventType: 'LocationUpdatedEvent',
           payload,
         };
 
@@ -63,7 +56,7 @@ module.exports = {
         });
       } else {
         logger.error('location not found');
-        callback(new Error('location not found'));
+        callback({ message: 'location not found', code: grpc.status.NOT_FOUND });
       }
     }).catch((err) => {
       logger.error(err.message);
@@ -72,9 +65,9 @@ module.exports = {
   },
 
   create(call, callback) {
-    const payload = _.pick(call.request, 'id', 'name', 'time_zone');
+    const payload = _.pick(call.request, 'id', 'name', 'timeZone');
     const message = {
-      event_type: 'LocationCreatedEvent',
+      eventType: 'LocationCreatedEvent',
       payload,
     };
     producer.emitModel(models.Location, message, (err, response) => {
@@ -86,7 +79,7 @@ module.exports = {
     models.Location.findById(call.request.id).then((location) => {
       if (location) {
         const message = {
-          event_type: 'LocationDeletedEvent',
+          eventType: 'LocationDeletedEvent',
           payload: { id: call.request.id },
         };
 
@@ -94,7 +87,7 @@ module.exports = {
           callback(err, {});
         });
       } else {
-        callback(new Error('location not found'));
+        callback({ message: 'location not found', code: grpc.status.NOT_FOUND });
       }
     }).catch((err) => {
       logger.error(err.message);
@@ -126,8 +119,8 @@ module.exports = {
            step(err);
          });
       },
-    ], (err, result) => {
-      callback(null, result);
+    ], (err, values) => {
+      callback(err, { values });
     });
   },
 
@@ -152,7 +145,7 @@ module.exports = {
         const ids = Object.keys(prev);
         levelsClient.getLevelNames({ ids }, (err, data) => {
           const result = _.map(prev, (count, id) => (
-            { id, title: data.values[id], count }
+            { id, name: data.values[id], count }
           ));
           step(null, result);
         });

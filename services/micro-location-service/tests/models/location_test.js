@@ -8,6 +8,8 @@ describe('Location Model', () => {
     mockLocation = {
       id: 1,
       name: 'Brazil',
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     models.Location.destroy({ where: {} }).then(() => {
@@ -69,6 +71,19 @@ describe('Location Model', () => {
           done();
         });
       });
+    });
+  });
+
+  describe('stringifyDates', () => {
+    it('turn all date object to string', (done) => {
+      const obj = {
+        birthday: (new Date('2011-04-11')),
+        created_at: (new Date('2016-10-01')),
+      };
+      const newObj = models.stringifyDates(obj);
+      newObj.birthday.should.equal('2011-04-11T00:00:00.000Z');
+      newObj.created_at.should.equal('2016-10-01T00:00:00.000Z');
+      done();
     });
   });
 });

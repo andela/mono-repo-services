@@ -9,13 +9,16 @@
  * locationsController: controllers that handles the microservice endpoints
  */
 const grpc = require('grpc');
-const proto = grpc.load('shared/locations/locations.proto');
-const server = new grpc.Server();
 const locationsController = require('../controllers/locations_controller');
 const healthCheck = require('micro-health-check');
 
+const proto = grpc.load(
+  'shared/locations/locations.proto',
+  'proto',
+  { convertFieldsToCamelCase: true }
+);
+const server = new grpc.Server();
 global.healthStatus = healthCheck.setStatus;
-// global.config = require('config')();
 
 // setup microservice endpoints and controller functions that processes requests to those endpoints
 server.addProtoService(proto.locations.micro.service, {

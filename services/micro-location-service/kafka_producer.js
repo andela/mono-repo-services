@@ -8,6 +8,8 @@ const kafka = require('no-kafka');
 const logger = require('winston');
 const topicName = 'location-topic';
 const fancyID = require('./shared/fancyid');
+const grpc = require('grpc');
+
 let producer;
 
 /* JavaScript does bitwise operations (like XOR, above) on 32-bit signed
@@ -42,7 +44,7 @@ module.exports = {
     model.build(message.payload).validate().then((validateErr) => {
       if (validateErr) {
         logger.error(validateErr.message);
-        cb(validateErr);
+        cb({ message: validateErr.message, code: grpc.status.INVALID_ARGUMENT });
       } else {
         this.emit(message, cb);
       }
@@ -51,6 +53,7 @@ module.exports = {
   emit(message, cb) {
     // normally payload at this point should have an id. But if not, generate a fancy id
     message.payload.id = message.payload.id || fancyID();
+    message.timestamp = (new Date()).toISOString();
     producer.send({
       topic: topicName,
       message: {
@@ -58,10 +61,10 @@ module.exports = {
         value: JSON.stringify(message),
       },
     }).then(() => {
-      logger.info(`Event Emitted: ${message.event_type}`, message.payload);
+      logger.info(`Event Emitted: ${message.eventType}`, message.payload);
       cb(null, {});
     }).catch((err) => {
-      logger.error(`Kafka Error Occurred on ${message.event_type} Emitted`, err);
+      logger.error(`Kafka Error Occurred on ${message.eventType} Emitted`, err);
       cb(err);
     });
   },

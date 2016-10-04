@@ -12,12 +12,21 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: { msg: 'name should not be emtpy' },
       },
     },
-    time_zone: {
+    timeZone: {
       type: DataTypes.STRING,
+      field: 'time_zone',
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      field: 'updated_at',
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      field: 'created_at',
     },
   }, {
-    underscored: true,
-    table_name: 'locations',
+    timestamps: false,
+    tableName: 'locations',
   });
   return Location;
 };

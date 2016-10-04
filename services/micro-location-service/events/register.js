@@ -2,7 +2,7 @@
  * Register all event handlers here
  */
 
-const locationHandler = require('./locationsHandler');
+const locationHandler = require('./handlers');
 
 module.exports = () => {
   const handlers = {};

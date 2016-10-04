@@ -3,23 +3,23 @@ const sinon = require('sinon');
 const Q = require('q');
 const grpc = require('grpc');
 const controller = require('../../controllers/locations_controller');
-const models = global.models;
 const producer = require('../../kafka_producer');
 
+const models = global.models;
 const locations = [
   {
     id: '-KPE-AopjdUJrbOELUuk',
     name: 'Lagos',
-    time_zone: '+2',
-    created_at: new Date(),
-    updated_at: new Date(),
+    timeZone: '+2',
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     id: '-KPE-IC7p2-CpGKnmUni',
     name: 'Kenya',
-    time_zone: '+4',
-    created_at: new Date(),
-    updated_at: new Date(),
+    timeZone: '+4',
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
 ];
 
@@ -311,10 +311,11 @@ describe('Locations controllers', () => {
     });
 
     it('should return the correct data', (done) => {
-      controller.allLocationsDetails({}, (err, allLocations) => {
-        allLocations.length.should.equal(2);
-        allLocations[0].title.should.equal('Lagos');
-        allLocations[0].count.should.equal(35);
+      controller.allLocationsDetails({}, (err, result) => {
+        const data = result.values;
+        data.length.should.equal(2);
+        data[0].title.should.equal('Lagos');
+        data[0].count.should.equal(35);
         done();
       });
     });
@@ -332,7 +333,7 @@ describe('Locations controllers', () => {
     it('should return correct count of data', (done) => {
       controller.getLocationDetails({ request: { id: '-KPE-AopjdUJrbOELUuk' } }, (err, data) => {
         data.values.length.should.equal(2);
-        data.values[0].title.should.equal('D0B-SIMULATIONS');
+        data.values[0].name.should.equal('D0B-SIMULATIONS');
         data.values[0].count.should.equal(13);
         done();
       });

@@ -2,7 +2,15 @@ const models = global.models;
 const sinon = require('sinon');
 const should = require('chai').Should();
 const Q = require('q');
-const handlers = require('../../event_handlers/locationsHandler');
+const handlers = require('../../events/handlers');
+
+const msgInfo = {
+  offset: 1,
+  partition: 1,
+  topic: 'organisation-topic',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
 
 describe('Locations Handler test', () => {
   afterEach(() => {
@@ -19,7 +27,7 @@ describe('Locations Handler test', () => {
     });
 
     it('should return correct data', (done) => {
-      handlers.createLocation({}, (err, data) => {
+      handlers.createLocation({}, msgInfo, (err, data) => {
         should.exist(data);
         data.should.equal('some id');
         done();
@@ -27,14 +35,14 @@ describe('Locations Handler test', () => {
     });
 
     it('error should not exist', (done) => {
-      handlers.createLocation({}, (err) => {
+      handlers.createLocation({}, msgInfo, (err) => {
         should.not.exist(err);
         done();
       });
     });
   });
 
-  describe('LocationCreated: failure', () => {
+  describe('createLocation: failure', () => {
     beforeEach(() => {
       sinon.stub(models.Location, 'create', () => {
         const deferred = Q.defer();
@@ -44,14 +52,14 @@ describe('Locations Handler test', () => {
     });
 
     it('should not return data', (done) => {
-      handlers.createLocation({}, (err, data) => {
+      handlers.createLocation({}, msgInfo, (err, data) => {
         should.not.exist(data);
         done();
       });
     });
 
     it('error should not exist', (done) => {
-      handlers.createLocation({}, (err) => {
+      handlers.createLocation({}, msgInfo, (err) => {
         should.exist(err);
         err.message.should.equal('Error occured');
         done();
@@ -59,7 +67,7 @@ describe('Locations Handler test', () => {
     });
   });
 
-  describe('LocationUpdated: success', () => {
+  describe('updateLocation: success', () => {
     beforeEach(() => {
       sinon.stub(models.Location, 'upsert', () => {
         const deferred = Q.defer();
@@ -69,7 +77,7 @@ describe('Locations Handler test', () => {
     });
 
     it('should return correct data', (done) => {
-      handlers.updateLocation({}, (err, data) => {
+      handlers.updateLocation({}, msgInfo, (err, data) => {
         should.exist(data);
         data.should.equal('some id');
         done();
@@ -77,14 +85,14 @@ describe('Locations Handler test', () => {
     });
 
     it('should error should not exist', (done) => {
-      handlers.updateLocation({}, (err) => {
+      handlers.updateLocation({}, msgInfo, (err) => {
         should.not.exist(err);
         done();
       });
     });
   });
 
-  describe('LocationUpdated: failure', () => {
+  describe('updateLocation: failure', () => {
     beforeEach(() => {
       sinon.stub(models.Location, 'upsert', () => {
         const deferred = Q.defer();
@@ -94,14 +102,14 @@ describe('Locations Handler test', () => {
     });
 
     it('should not return data', (done) => {
-      handlers.updateLocation({}, (err, data) => {
+      handlers.updateLocation({}, msgInfo, (err, data) => {
         should.not.exist(data);
         done();
       });
     });
 
     it('should error should not exist', (done) => {
-      handlers.updateLocation({}, (err) => {
+      handlers.updateLocation({}, msgInfo, (err) => {
         should.exist(err);
         err.message.should.equal('Server Error');
         done();
@@ -109,7 +117,7 @@ describe('Locations Handler test', () => {
     });
   });
 
-  describe('LocationDestroyed: success', () => {
+  describe('deleteLocation: success', () => {
     beforeEach(() => {
       sinon.stub(models.Location, 'destroy', () => {
         const deferred = Q.defer();
@@ -119,7 +127,7 @@ describe('Locations Handler test', () => {
     });
 
     it('should return correct data', (done) => {
-      handlers.destroyLocation({ payload: { location_id: 1 } }, (err, data) => {
+      handlers.destroyLocation({ payload: { location_id: 1 } }, msgInfo, (err, data) => {
         should.exist(data);
         data.should.deep.equal({});
         done();
@@ -127,14 +135,14 @@ describe('Locations Handler test', () => {
     });
 
     it('should error should not exist', (done) => {
-      handlers.destroyLocation({ payload: { location_id: 1 } }, (err) => {
+      handlers.destroyLocation({ payload: { location_id: 1 } }, msgInfo, (err) => {
         should.not.exist(err);
         done();
       });
     });
   });
 
-  describe('LocationDestroyed: failure', () => {
+  describe('deleteLocation: failure', () => {
     beforeEach(() => {
       sinon.stub(models.Location, 'destroy', () => {
         const deferred = Q.defer();
@@ -144,14 +152,14 @@ describe('Locations Handler test', () => {
     });
 
     it('should not return  data', (done) => {
-      handlers.destroyLocation({ payload: { location_id: 1 } }, (err, data) => {
+      handlers.destroyLocation({ payload: { location_id: 1 } }, msgInfo, (err, data) => {
         should.not.exist(data);
         done();
       });
     });
 
     it('should error should not exist', (done) => {
-      handlers.destroyLocation({ payload: { location_id: 1 } }, (err) => {
+      handlers.destroyLocation({ payload: { location_id: 1 } }, msgInfo, (err) => {
         should.exist(err);
         err.message.should.equal('Server Error');
         done();

@@ -1,10 +1,12 @@
+const env = process.env.NODE_ENV || 'development';
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const lodash = require('lodash');
+
 const basename = path.basename(module.filename);
-const env = process.env.NODE_ENV || 'development';
-const config = require('../config/database')[env];
+const logger = require('winston');
+const config = require('../database')[env];
 require('dotenv').config();
 
 const db = {};
@@ -32,7 +34,32 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
+function messageProcessed(msgInfo) {
+  msgInfo.topicOffset = msgInfo.offset;
+  return db.OffsetManager.find({
+    where: { topic: msgInfo.topic, partition: msgInfo.partition },
+  }).then((lastOffset) => {
+    const offset = lastOffset.dataValues.topicOffset;
+    if (lastOffset && msgInfo.offset <= offset) {
+      return true;
+    }
+    return false;
+  }).catch((err) => {
+    logger.error(err.message);
+    return false;
+  });
+}
+
 module.exports = lodash.extend({
   sequelize,
+  messageProcessed,
   Sequelize,
+  stringifyDates(value) {
+    Object.keys(value).forEach((prop) => {
+      if (value[prop] instanceof Date) {
+        value[prop] = value[prop].toISOString();
+      }
+    });
+    return value;
+  },
 }, db);

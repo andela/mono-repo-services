@@ -1,17 +1,16 @@
 module.exports = {
   up(queryInterface, Sequelize) {
-    return queryInterface.createTable('locations', {
-      id: {
-        allowNull: false,
+    return queryInterface.createTable('offset_managers', {
+      topic: {
+        type: Sequelize.STRING,
         primaryKey: true,
-        type: Sequelize.STRING,
       },
-      time_zone: {
-        type: Sequelize.STRING,
+      partition: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
       },
-      name: {
-        allowNull: false,
-        type: Sequelize.STRING,
+      topic_offset: {
+        type: Sequelize.INTEGER,
       },
       updated_at: {
         allowNull: false,
@@ -23,8 +22,7 @@ module.exports = {
       },
     });
   },
-
   down(queryInterface) {
-    return queryInterface.dropTable('locations');
+    return queryInterface.dropTable('offset_managers');
   },
 };
