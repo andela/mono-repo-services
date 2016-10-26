@@ -58,6 +58,8 @@ module.exports = lodash.extend({
     Object.keys(value).forEach((prop) => {
       if (value[prop] instanceof Date) {
         value[prop] = value[prop].toISOString();
+      } else if (!value[prop]) {
+        delete value[prop];
       }
     });
     return value;

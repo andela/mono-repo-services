@@ -1,4 +1,4 @@
-TAG = 0.0.22
+TAG = 0.0.23
 PROJECT = microservices-kube
 IMAGE = location
 pwd = $(shell pwd)
