@@ -1,4 +1,4 @@
-TAG = 0.0.23
+TAG = 0.0.25
 PROJECT = microservices-kube
 IMAGE = location
 pwd = $(shell pwd)
@@ -25,6 +25,14 @@ push: image
 deploy: push
 	kubectl patch deployment locations -p '{"spec":{"template":{"spec":{"containers":[{"name":"locations","image":"'$(LOCATION_IMAGE)'"}]}}}}'
 
+deploy_prod: build
+	PROD_TAG = 0.0.0
+	PROD_PROJECT = andela-kube
+	PROD_IMAGE = us.gcr.io/$(PROD_PROJECT)/location
+
+	docker build -t $(PROD_IMAGE):$(PROD_TAG) -t $(PROD_IMAGE):latest .
+	gcloud docker push $(PROD_IMAGE):$(PROD_TAG)
+	kubectl patch deployment locations -p '{"spec":{"template":{"spec":{"containers":[{"name":"locations","image":"'$(PROD_IMAGE):$(PROD_TAG)'"}]}}}}'
 run:
 	docker run  us.gcr.io/$(PROJECT)/$(IMAGE):$(TAG)
 
