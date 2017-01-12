@@ -4,6 +4,7 @@ const producer = require('../kafka_producer');
 const _ = require('lodash');
 const grpc = require('grpc');
 const async = require('async');
+const camelcaseKeys = require('camelcase-keys');
 const sharedRootPath = require('path').join(__dirname, '..', 'shared');
 const levelsProto = grpc.load({ root: sharedRootPath, file: 'levels/levels.proto' });
 const usersProto = grpc.load({ root: sharedRootPath, file: 'users/users.proto' });
@@ -44,11 +45,14 @@ module.exports = {
 
   update(call, callback) {
     const payload = _.pick(call.request, ['id', 'name', 'timeZone']);
+    const metadata = camelcaseKeys(call.metadata.getMap());
     models.Location.findById(payload.id).then((location) => {
       if (location) {
         const message = {
           eventType: 'LocationUpdatedEvent',
           payload,
+          authorId: metadata.authorId,
+          authorName: metadata.authorName,
         };
 
         producer.emitModel(models.Location, message, (err, response) => {
@@ -65,10 +69,13 @@ module.exports = {
   },
 
   create(call, callback) {
+    const metadata = camelcaseKeys(call.metadata.getMap());
     const payload = _.pick(call.request, 'id', 'name', 'timeZone');
     const message = {
       eventType: 'LocationCreatedEvent',
       payload,
+      authorId: metadata.authorId,
+      authorName: metadata.authorName,
     };
     producer.emitModel(models.Location, message, (err, response) => {
       callback(err, response);
@@ -76,11 +83,14 @@ module.exports = {
   },
 
   destroy(call, callback) {
+    const metadata = camelcaseKeys(call.metadata.getMap());
     models.Location.findById(call.request.id).then((location) => {
       if (location) {
         const message = {
           eventType: 'LocationDeletedEvent',
           payload: { id: call.request.id },
+          authorId: metadata.authorId,
+          authorName: metadata.authorName,
         };
 
         producer.emit(message, (err) => {

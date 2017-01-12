@@ -4,6 +4,7 @@ const Q = require('q');
 const grpc = require('grpc');
 const controller = require('../../controllers/locations_controller');
 const producer = require('../../kafka_producer');
+const metadata = new grpc.Metadata();
 
 const models = global.models;
 const locations = [
@@ -176,7 +177,7 @@ describe('Locations controllers', () => {
   });
 
   describe('Update success', () => {
-    const call = { metadata: {}, request: {} };
+    const call = { metadata, request: {} };
     beforeEach(() => {
       sinon.stub(models.Location, 'findById', () => {
         const deferred = Q.defer();
@@ -206,7 +207,7 @@ describe('Locations controllers', () => {
   });
 
   describe('Update failure', () => {
-    const call = { metadata: {}, request: {} };
+    const call = { metadata, request: {} };
     beforeEach(() => {
       sinon.stub(models.Location, 'findById', () => {
         const deferred = Q.defer();
@@ -230,7 +231,7 @@ describe('Locations controllers', () => {
   });
 
   describe('Create', () => {
-    const call = { metadata: {}, request: { name: 'Nigeria' } };
+    const call = { metadata, request: { name: 'Nigeria' } };
     beforeEach(() => {
       sinon.stub(models.Location, 'findById', () => {
         const deferred = Q.defer();
@@ -254,7 +255,7 @@ describe('Locations controllers', () => {
   });
 
   describe('Destroy: Success', () => {
-    const call = { metadata: {}, request: {} };
+    const call = { metadata, request: {} };
     beforeEach(() => {
       sinon.stub(models.Location, 'findById', () => {
         const deferred = Q.defer();
@@ -278,7 +279,7 @@ describe('Locations controllers', () => {
   });
 
   describe('Destroy: Failure', () => {
-    const call = { metadata: {}, request: {} };
+    const call = { metadata, request: {} };
     beforeEach(() => {
       sinon.stub(models.Location, 'findById', () => {
         const deferred = Q.defer();
