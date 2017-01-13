@@ -6,6 +6,7 @@ const grpc = require('grpc');
 const async = require('async');
 const camelcaseKeys = require('camelcase-keys');
 const sharedRootPath = require('path').join(__dirname, '..', 'shared');
+
 const levelsProto = grpc.load({ root: sharedRootPath, file: 'levels/levels.proto' });
 const usersProto = grpc.load({ root: sharedRootPath, file: 'users/users.proto' });
 const levelsClient = new levelsProto.levels.micro(
@@ -25,6 +26,7 @@ module.exports = {
       ));
       callback(null, result);
     }).catch((err) => {
+      logger.error(err.message);
       callback(err);
     });
   },
@@ -59,7 +61,6 @@ module.exports = {
           callback(err, response);
         });
       } else {
-        logger.error('location not found');
         callback({ message: 'location not found', code: grpc.status.NOT_FOUND });
       }
     }).catch((err) => {
@@ -125,7 +126,8 @@ module.exports = {
              return _.pick(location, ['id', 'title', 'count']);
            });
            step(null, result);
-         }).catch(err => {
+         }).catch((err) => {
+           logger.error(err);
            step(err);
          });
       },
@@ -142,7 +144,8 @@ module.exports = {
           .then((location) => {
             step(null, location);
           })
-          .catch(err => {
+          .catch((err) => {
+            logger.error(err);
             step(err);
           });
       },
