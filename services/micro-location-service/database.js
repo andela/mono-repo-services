@@ -16,7 +16,7 @@ const production = {
 };
 
 const test = {
-  url: process.env.DATABASE_URL,
+  url: process.env.DATABASE_URL || 'postgres://postgres:password@localhost:5432/locations_test',
   dialect: 'postgres',
 };
 
