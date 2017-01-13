@@ -20,6 +20,7 @@
   "dependencies": {
     "async": "^2.0.1",
     "bluebird": "^3.4.0",
+    "bugsnag": "^1.9.0",
     "dotenv": "^2.0.0",
     "express": "^4.14.0",
     "grpc": "^1.0.0",
@@ -35,7 +36,8 @@
     "sequelize-cli": "^2.4.0",
     "should": "^8.3.1",
     "sinon": "^1.17.5",
-    "winston": "^2.2.0"
+    "winston": "^2.2.0",
+    "winston-bugsnag": "^2.1.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1",

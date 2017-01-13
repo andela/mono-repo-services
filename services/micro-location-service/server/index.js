@@ -12,6 +12,15 @@ const grpc = require('grpc');
 const locationsController = require('../controllers/locations_controller');
 const healthCheck = require('micro-health-check');
 
+const bugsnag = require('bugsnag');
+const winston = require('winston');
+const winstonBugsnag = require('winston-bugsnag');
+
+if (process.env.NODE_ENV === 'production') {
+  bugsnag.register(process.env.BUGSNAG_API_KEY);
+  winston.add(winstonBugsnag);
+}
+
 const proto = grpc.load(
   'shared/locations/locations.proto',
   'proto',
