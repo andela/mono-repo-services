@@ -1,4 +1,4 @@
-TAG = 0.0.25
+TAG = 0.0.26
 PROJECT = microservices-kube
 IMAGE = location
 pwd = $(shell pwd)
@@ -21,6 +21,7 @@ image:
 
 push: image
 	gcloud docker push us.gcr.io/$(PROJECT)/$(IMAGE):$(TAG)
+	gcloud docker push us.gcr.io/$(PROJECT)/$(IMAGE):latest
 
 deploy: push
 	kubectl patch deployment locations -p '{"spec":{"template":{"spec":{"containers":[{"name":"locations","image":"'$(LOCATION_IMAGE)'"}]}}}}'
