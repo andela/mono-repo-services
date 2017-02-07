@@ -1,15 +1,30 @@
 machine:
   node:
     version: 6.3.0
+  services:
+    - docker
   environment:
     NODE_ENV: test
     DATABASE_URL: postgres://ubuntu:@127.0.0.1:5432/circle_test
     COVERALLS_SERVICE_NAME: circle-ci
     COVERALLS_REPO_TOKEN: htjWluPB25Y9AOtw9GnftNiAxzV5WSdri
     SERVICE_URL: 0.0.0.0:50062
-    TOPIC_NAME: locations-topic
+    TOPIC_NAME: location-topic
     LEVELS_SERVICE_URL: 0.0.0.0:50055
     USERS_SERVICE_URL: 0.0.0.0:50051
+    PROJECT_NAME: microservices-kube
+    CLUSTER_NAME: staging
+    CLOUDSDK_COMPUTE_ZONE: us-east1-c
+    CONTAINER_NAME: location
+    DEPLOYMENT: location
+    IMAGE: location
+    PROJECT_NAME_PROD: andela-kube
+    CLUSTER_NAME_PROD: andela-prod
+    CLOUDSDK_COMPUTE_ZONE_PROD: us-east1-b
+    CONTAINER_NAME_PROD: location
+    DEPLOYMENT_PROD: location
+    IMAGE_PROD: location
+    IMG_TAG: $(echo $CIRCLE_SHA1 | cut -c -7)
 checkout:
   post:
     - git submodule sync
@@ -17,3 +32,12 @@ checkout:
 test:
   post:
     - gulp coveralls
+deployment:
+  production:
+    branch: master
+    commands:
+      - ./shared/deploy-production.sh
+  staging:
+    branch: develop
+    commands:
+      - ./shared/deploy-staging.sh

@@ -1,8 +1,8 @@
-TAG = 0.0.26
-PROJECT = microservices-kube
-IMAGE = location
+TAG = $(shell git rev-parse --short HEAD)
+PROJECT = sandbox-kube
+IMAGE = us.gcr.io/$(PROJECT)/location
 pwd = $(shell pwd)
-TOPIC = locations-topic
+TOPIC = location-topic
 LOCATION_IMAGE = us.gcr.io/$(PROJECT)/$(IMAGE):$(TAG)
 # DATABASE_URL will be passed as environment variable
 
@@ -17,32 +17,27 @@ test:
 	npm test
 
 image:
-	docker build -t us.gcr.io/$(PROJECT)/$(IMAGE):$(TAG) -t us.gcr.io/$(PROJECT)/$(IMAGE):latest .
+	docker build -t $(IMAGE):$(TAG) -t $(IMAGE):latest .
 
 push: image
-	gcloud docker push us.gcr.io/$(PROJECT)/$(IMAGE):$(TAG)
-	gcloud docker push us.gcr.io/$(PROJECT)/$(IMAGE):latest
+	gcloud docker push $(IMAGE):$(TAG)
+  gcloud docker push $(IMAGE):latest
 
 deploy: push
-	kubectl patch deployment locations -p '{"spec":{"template":{"spec":{"containers":[{"name":"locations","image":"'$(LOCATION_IMAGE)'"}]}}}}'
+	kubectl set image deployment/location location=$(IMAGE)/$(TAG)
+
+deploy_stage: 
+	make deploy PROJECT=microservices-kube
 
 deploy_prod: build
-	PROD_TAG = 0.0.0
-	PROD_PROJECT = andela-kube
-	PROD_IMAGE = us.gcr.io/$(PROD_PROJECT)/location
+	make deploy PROJECT=andela-kube
 
-	docker build -t $(PROD_IMAGE):$(PROD_TAG) -t $(PROD_IMAGE):latest .
-	gcloud docker push $(PROD_IMAGE):$(PROD_TAG)
-	kubectl patch deployment locations -p '{"spec":{"template":{"spec":{"containers":[{"name":"locations","image":"'$(PROD_IMAGE):$(PROD_TAG)'"}]}}}}'
 run:
-	docker run  us.gcr.io/$(PROJECT)/$(IMAGE):$(TAG)
+	docker run $(IMAGE):$(TAG)
 
 minikube:
 	git submodule update --init
-	eval $$(minikube docker-env) && docker build -t us.gcr.io/$(PROJECT)/$(IMAGE):minikube .
-
-run:
-	docker run  us.gcr.io/$(PROJECT)/$(IMAGE):$(TAG)
+	eval $$(minikube docker-env) && docker build -t $(IMAGE):latest .
 
 kafka_install:
 	brew install kafka
