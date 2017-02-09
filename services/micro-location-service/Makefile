@@ -24,7 +24,7 @@ push: image
   gcloud docker push $(IMAGE):latest
 
 deploy: push
-	kubectl set image deployment/location location=$(IMAGE)/$(TAG)
+	kubectl set image deployment/location location=$(IMAGE):$(TAG)
 
 deploy_stage: 
 	make deploy PROJECT=microservices-kube
