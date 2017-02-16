@@ -10,8 +10,8 @@ require('dotenv').config({ silent: true });
 global.models = require('./models');
 const server = require('./shared/kafka/server');
 const producer = require('./kafka_producer');
-const usersServer = require('./shared/users/server');
-const levelsServer = require('./shared/levels/server');
+const usersServer = require('./shared/user/server');
+const levelsServer = require('./shared/level/server');
 require('dotenv').config();
 
 gulp.task('coverage-setup', () => (

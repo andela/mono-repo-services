@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const proto = grpc.load(
-  'shared/locations/locations.proto',
+  'shared/location/location.proto',
   'proto',
   { convertFieldsToCamelCase: true }
 );
@@ -30,7 +30,7 @@ const server = new grpc.Server();
 global.healthStatus = healthCheck.setStatus;
 
 // setup microservice endpoints and controller functions that processes requests to those endpoints
-server.addProtoService(proto.locations.micro.service, {
+server.addProtoService(proto.location.micro.service, {
   list: locationsController.index,
   get: locationsController.show,
   create: locationsController.create,

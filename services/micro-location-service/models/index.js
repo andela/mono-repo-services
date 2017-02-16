@@ -17,7 +17,6 @@ const options = {
   benchmark: true,
   dialect: config.dialect,
 };
-
 const sequelize = new Sequelize(config.url, Object.assign({}, options));
 
 fs
