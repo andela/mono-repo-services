@@ -6,7 +6,7 @@
  * e.g '192.168.99.100:32769'
  */
 const development = {
-  url: process.env.DATABASE_URL,
+  url: process.env.DATABASE_URL || 'postgres://andela:my_password@localhost:5432/location',
   dialect: 'postgres',
 };
 
