@@ -1,0 +1,27 @@
+version: '2.1'
+services:
+  location-svc:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    image: us.gcr.io/microservices-kube/location
+    ports:
+    - "5555:50050"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgres://andela:my_password@200.0.0.1:5432/location
+      SERVICE_URL: 0.0.0.0:50050
+      KAFKA_URL: "200.0.0.1"
+      KAFKA_CLIENT_ID: location-client
+    volumes:
+    - .:/usr/src/app
+    command: >
+      sh -c '
+      if test -d node_modules;
+      then
+        echo node_modules_exists ;
+      else
+        cp -a /tmp/node_modules /usr/src/app/;
+      fi && npm run start_dev'
+  acceptance:
+    command: user.feature user_role.feature
