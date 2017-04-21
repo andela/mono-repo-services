@@ -4,10 +4,8 @@
 
 const locationHandler = require('./handlers');
 
-module.exports = () => {
-  const handlers = {};
-  handlers.LocationCreatedEvent = locationHandler.createLocation;
-  handlers.LocationUpdatedEvent = locationHandler.updateLocation;
-  handlers.LocationDeletedEvent = locationHandler.destroyLocation;
-  return handlers;
+module.exports = {
+  LocationCreatedEvent: locationHandler.createLocation,
+  LocationUpdatedEvent: locationHandler.updateLocation,
+  LocationDeletedEvent: locationHandler.destroyLocation,
 };
