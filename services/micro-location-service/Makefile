@@ -1,12 +1,17 @@
-TAG = $(shell git rev-parse --short HEAD)
 PROJECT = sandbox-kube
 IMAGE = us.gcr.io/$(PROJECT)/location
 pwd = $(shell pwd)
 TOPIC = location-topic
 LOCATION_IMAGE = us.gcr.io/$(PROJECT)/$(IMAGE):$(TAG)
 # DATABASE_URL will be passed as environment variable
+export TAG = $(shell git rev-parse --short HEAD)
+export HOST_IP=$(shell ipconfig getifaddr en0 || ipconfig getifaddr en1)
 
-all: test
+all: 
+	docker-compose up location-svc
+
+docker_build:
+	docker-compose build --no-cache location-svc
 
 dependencies:
 	npm install -g npm
@@ -64,4 +69,23 @@ kafka_consume: kafka_start
 kafka_produce: kafka_start
 	kafka-console-producer --broker-list localhost:9092 --topic $(TOPIC)
 
-clean:
+shared:
+	git submodule sync
+	git submodule update --init
+	git submodule foreach "(git checkout develop; git pull)"
+	
+keys:
+	openssl genrsa -out compose/keys/auth-private-key.json 1024 && \
+	openssl rsa -in compose/keys/auth-private-key.json -pubout > compose/keys/auth-public-key.json
+
+gen_compose:
+	svc_level='' svc_user='' svc_authorization='' envtpl < shared/compose/docker-compose.yaml.jinja2 > docker-compose.yml
+	
+compose:
+	sudo ifconfig lo0 alias 200.0.0.1 255.255.255.0
+	./shared/compose/up.sh
+
+bootstrap:
+	git submodule update --init && cd shared && git checkout develop && cd ..
+	rm -rf node_modules
+	cp docker-compose.override.yml.sample docker-compose.override.yml
