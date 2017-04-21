@@ -1,0 +1,13 @@
+FROM node:6-alpine
+
+WORKDIR /tmp
+COPY package.json /tmp/
+
+RUN apk add --update libc6-compat bash
+RUN npm config set registry http://registry.npmjs.org/ && npm install
+
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+EXPOSE 50050
