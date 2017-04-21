@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test gulp test",
-    "start": "node_modules/.bin/sequelize db:migrate && node index.js"
+    "start": "node_modules/.bin/sequelize db:migrate && node index.js",
+    "start_dev": "node_modules/.bin/sequelize db:migrate && nodemon --ignore node_modules/ index.js"
   },
   "repository": {
     "type": "git",
