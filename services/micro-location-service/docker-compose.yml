@@ -1,0 +1,57 @@
+version: '2.1'
+services: 
+  acceptance:
+    image: gcr.io/microservices-kube/acceptance
+    environment:
+      GATEWAY_URL: api-gateway:50050
+      DATABASE_URL: postgres://andela:my_password@postgres:5432/postgres?sslmode=disable 
+  authorization-svc: 
+    image: gcr.io/microservices-kube/authorization
+    env_file: ./shared/compose/env_files/authorization.env
+    environment:
+      NODE_ENV: minikube
+      DATABASE_URL: postgres://andela:my_password@200.0.0.1:5432/authorization
+      SERVICE_URL: 0.0.0.0:50050
+      KAFKA_URL: "200.0.0.1"
+      KAFKA_CLIENT_ID: authorization-client
+    healthcheck:
+      test: nc -z 0.0.0.0 50050 
+  level-svc: 
+    image: gcr.io/microservices-kube/level
+    env_file: ./shared/compose/env_files/level.env
+    environment:
+      NODE_ENV: minikube
+      DATABASE_URL: postgres://andela:my_password@200.0.0.1:5432/level
+      SERVICE_URL: 0.0.0.0:50050
+      KAFKA_URL: "200.0.0.1"
+      KAFKA_CLIENT_ID: level-client
+    healthcheck:
+      test: nc -z 0.0.0.0 50050 
+  user-svc: 
+    image: gcr.io/microservices-kube/user
+    env_file: ./shared/compose/env_files/user.env
+    environment:
+      NODE_ENV: minikube
+      DATABASE_URL: postgres://andela:my_password@200.0.0.1:5432/user?sslmode=disable 
+      SERVICE_URL: 0.0.0.0:50050
+      KAFKA_URL: "200.0.0.1"
+      KAFKA_CLIENT_ID: user-client
+    healthcheck:
+      test: nc -z 0.0.0.0 50050 
+  api-gateway:
+    image: gcr.io/microservices-kube/api-gateway
+    ports:
+    - "5000:50050"
+    env_file: ./shared/compose/env_files/api-gateway.env 
+    volumes:
+    - ./shared/compose/keys:/etc/credentials
+    expose:
+    - "50050"
+    - "8000"
+    depends_on: 
+      authorization-svc: 
+        condition: service_healthy  
+      level-svc: 
+        condition: service_healthy  
+      user-svc: 
+        condition: service_healthy  
