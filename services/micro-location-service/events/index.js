@@ -37,11 +37,9 @@ function dataHandler(messageSet, topic, partition) {
     };
     if (handler) {
       request.payload.updatedAt = new Date(request.timestamp);
-      console.log('payload is: ', request.payload);
       handler(request.payload, (err) => {
         if (err) {
           logger.error(err.message);
-          console.log("error at handler!>>>>>>>>>>");
         } else {
           logger.info('finished processing ', request.eventType, ', ', request.payload.id);
           consumer.commitOffset(messageInfo);
