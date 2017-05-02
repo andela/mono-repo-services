@@ -19,7 +19,6 @@ const Kafka = require('no-kafka');
 const dns = require('dns');
 const Promise = require('bluebird');
 const logger = require('winston');
-const models = require('../models');
 const producer = require('../kafka_producer');
 const handlers = require('./register');
 
