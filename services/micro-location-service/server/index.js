@@ -11,6 +11,7 @@
 const grpc = require('grpc');
 const locationsController = require('../controllers/locations_controller');
 const healthCheck = require('micro-health-check');
+const podName = process.env.POD_NAME;
 
 const bugsnag = require('bugsnag');
 const winston = require('winston');
@@ -40,7 +41,7 @@ server.addProtoService(proto.location.micro.service, {
   getLocationDetails: locationsController.getLocationDetails,
 });
 
-global.healthStatus('', 1);
+global.healthStatus(podName, 1);
 server.addProtoService(healthCheck.service, healthCheck.implementation());
 // initialize server
 server.bind(process.env.SERVICE_URL, grpc.ServerCredentials.createInsecure());

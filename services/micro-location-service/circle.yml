@@ -25,6 +25,9 @@ machine:
     DEPLOYMENT_PROD: location
     IMAGE_PROD: location
     IMG_TAG: $(echo $CIRCLE_SHA1 | cut -c -7)
+    GRPC_HEALTH_CHECK_TAG: 1.0.1
+    DOCKER_PROJECT_NAME: nodejs-docker
+    TAG: v1.0.0
 checkout:
   post:
     - git submodule sync
@@ -36,8 +39,8 @@ deployment:
   production:
     branch: master
     commands:
-      - ./shared/deploy-production.sh
+      - ./shared/deployment.sh
   staging:
     branch: develop
     commands:
-      - ./shared/deploy-staging.sh
+      - ./shared/deployment.sh
