@@ -31,7 +31,7 @@ const server = new grpc.Server();
 global.healthStatus = healthCheck.setStatus;
 
 // setup microservice endpoints and controller functions that processes requests to those endpoints
-server.addProtoService(proto.location.micro.service, {
+server.addService(proto.location.micro.service, {
   list: locationsController.index,
   get: locationsController.show,
   create: locationsController.create,
@@ -42,7 +42,7 @@ server.addProtoService(proto.location.micro.service, {
 });
 
 global.healthStatus(podName, 1);
-server.addProtoService(healthCheck.service, healthCheck.implementation());
+server.addService(healthCheck.service, healthCheck.implementation());
 // initialize server
 server.bind(process.env.SERVICE_URL, grpc.ServerCredentials.createInsecure());
 module.exports = server;

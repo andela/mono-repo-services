@@ -21,10 +21,10 @@ const usersClient = new usersProto.user.micro(
 module.exports = {
   index(call, callback) {
     models.Location.findAll({ raw: true }).then((locations) => {
-      const result = locations.map(location => (
+      const values = locations.map(location => (
         models.stringifyDates(location)
       ));
-      callback(null, result);
+      callback(null, { values });
     }).catch((err) => {
       logger.error(err.message);
       callback(err);

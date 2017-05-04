@@ -52,14 +52,15 @@ describe('Locations controllers', () => {
     it('should return locations data', (done) => {
       controller.index({}, (err, loc) => {
         should.exist(loc);
-        loc[0].name.should.equal('Lagos');
+        const data = loc.values;
+        data[0].name.should.equal('Lagos');
         done();
       });
     });
 
     it('should contain correct data count', (done) => {
       controller.index({}, (err, result) => {
-        result.length.should.equal(2);
+        result.values.length.should.equal(2);
         done();
       });
     });

@@ -19,14 +19,14 @@ dependencies:
 	npm install -g gulp
 
 test:
-	npm test
+	docker-compose run -e DATABASE_URL='postgres://postgres:password@200.0.0.1:5432/location_test' location-svc npm test
 
 image:
 	docker build -t $(IMAGE):$(TAG) -t $(IMAGE):latest .
 
 push: image
-	gcloud docker push $(IMAGE):$(TAG)
-  gcloud docker push $(IMAGE):latest
+	gcloud docker -- push $(IMAGE):$(TAG)
+  	gcloud docker -- push $(IMAGE):latest
 
 deploy: push
 	kubectl set image deployment/location location=$(IMAGE):$(TAG)
