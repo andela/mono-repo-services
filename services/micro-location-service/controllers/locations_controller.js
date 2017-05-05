@@ -8,12 +8,12 @@ const camelcaseKeys = require('camelcase-keys');
 const sharedRootPath = require('path').join(__dirname, '..', 'shared');
 
 const levelsProto = grpc.load({ root: sharedRootPath, file: 'level/level.proto' });
-const usersProto = grpc.load({ root: sharedRootPath, file: 'user/user.proto' });
+const usersProto = grpc.load({ root: sharedRootPath, file: 'user/user-svc.proto' });
 const levelsClient = new levelsProto.level.micro(
   process.env.LEVELS_SERVICE_URL,
   grpc.credentials.createInsecure()
 );
-const usersClient = new usersProto.user.micro(
+const usersClient = new usersProto.user.UserService(
   process.env.USERS_SERVICE_URL,
   grpc.credentials.createInsecure()
 );
