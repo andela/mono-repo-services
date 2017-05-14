@@ -12,6 +12,7 @@ const grpc = require('grpc');
 const locationsController = require('../controllers/locations_controller');
 const healthCheck = require('micro-health-check');
 const podName = process.env.POD_NAME;
+const root = require('path').join(__dirname, '..', 'shared');
 
 const bugsnag = require('bugsnag');
 const winston = require('winston');
@@ -23,7 +24,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const proto = grpc.load(
-  'shared/location/location.proto',
+  { root, file: 'location/location-svc.proto' },
   'proto',
   { convertFieldsToCamelCase: true }
 );
@@ -31,7 +32,7 @@ const server = new grpc.Server();
 global.healthStatus = healthCheck.setStatus;
 
 // setup microservice endpoints and controller functions that processes requests to those endpoints
-server.addService(proto.location.micro.service, {
+server.addService(proto.location.LocationService.service, {
   list: locationsController.index,
   get: locationsController.show,
   create: locationsController.create,

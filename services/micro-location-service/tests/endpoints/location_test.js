@@ -1,13 +1,14 @@
 const should = require('chai').should();
 const grpc = require('grpc');
 const models = global.models;
+const root = require('path').join(__dirname, '..', '..', 'shared');
 const proto = grpc.load(
-  'shared/location/location.proto',
+  { root, file: 'location/location-svc.proto' },
   'proto',
   { convertFieldsToCamelCase: true }
 );
 /* eslint-disable new-cap */
-const client = new proto.location.micro(process.env.SERVICE_URL,
+const client = new proto.location.LocationService(process.env.SERVICE_URL,
   grpc.credentials.createInsecure());
 /* eslint-enable new-cap */
 const locations = [

@@ -110,7 +110,7 @@ The messages and their data types that we are going to use are clearly defined i
 ### Read Operation endpoint  
 We'll use `get all locations details` operation to map to an endpoint for demonstration purposes  
   * Create a proto definition for the endpoint   
-    To do this navigate  to shared/locations/locations.proto file
+    To do this navigate  to shared/location/location-svc.proto file
     ```
     rpc List(Empty) returns (Locations) {}
     ```

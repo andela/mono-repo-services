@@ -2,26 +2,26 @@
 <a name="top"/>
 
 ## Table of Contents
-* [locations.proto](#locations.proto)
- * [Detail](#locations.Detail)
- * [Details](#locations.Details)
- * [Empty](#locations.Empty)
- * [Id](#locations.Id)
- * [Location](#locations.Location)
- * [Locations](#locations.Locations)
- * [Overview](#locations.Overview)
- * [Overviews](#locations.Overviews)
- * [micro](#locations.micro)
+* [location-svc.proto](#location-svc.proto)
+ * [Detail](#location.Detail)
+ * [Details](#location.Details)
+ * [Empty](#location.Empty)
+ * [Id](#location.Id)
+ * [Location](#location.Location)
+ * [Locations](#location.Locations)
+ * [Overview](#location.Overview)
+ * [Overviews](#location.Overviews)
+ * [micro](#location.LocationService)
 * [Scalar Value Types](#scalar-value-types)
 
-<a name="locations.proto"/>
+<a name="location-svc.proto"/>
 <p align="right"><a href="#top">Top</a></p>
 
-## locations.proto
+## location-svc.proto
 
 
 
-<a name="locations.Detail"/>
+<a name="location.Detail"/>
 ### Detail
 
 
@@ -32,16 +32,16 @@
 | count | [int32](#int32) | optional |  | |
 
 
-<a name="locations.Details"/>
+<a name="location.Details"/>
 ### Details
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| values | [Detail](#locations.Detail) | repeated |  | |
+| values | [Detail](#location.Detail) | repeated |  | |
 
 
-<a name="locations.Empty"/>
+<a name="location.Empty"/>
 ### Empty
 
 
@@ -49,7 +49,7 @@
 | ----- | ---- | ----- | ----------- |
 
 
-<a name="locations.Id"/>
+<a name="location.Id"/>
 ### Id
 
 
@@ -58,7 +58,7 @@
 | id | [string](#string) | optional |  | |
 
 
-<a name="locations.Location"/>
+<a name="location.Location"/>
 ### Location
 
 
@@ -73,16 +73,16 @@
 | auditor_name | [string](#string) | optional |  | |
 
 
-<a name="locations.Locations"/>
+<a name="location.Locations"/>
 ### Locations
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| values | [Location](#locations.Location) | repeated |  | |
+| values | [Location](#location.Location) | repeated |  | |
 
 
-<a name="locations.Overview"/>
+<a name="location.Overview"/>
 ### Overview
 
 
@@ -93,30 +93,30 @@
 | count | [int32](#int32) | optional |  | |
 
 
-<a name="locations.Overviews"/>
+<a name="location.Overviews"/>
 ### Overviews
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| values | [Overview](#locations.Overview) | repeated |  | |
+| values | [Overview](#location.Overview) | repeated |  | |
 
 
 
 
-<a name="locations.micro"/>
+<a name="location.LocationService"/>
 ### micro
 
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| List | [Empty](#locations.Empty) | [Locations](#locations.Locations) |  |
-| Get | [Id](#locations.Id) | [Location](#locations.Location) |  |
-| Create | [Location](#locations.Location) | [Empty](#locations.Empty) |  |
-| Update | [Location](#locations.Location) | [Location](#locations.Location) |  |
-| Delete | [Id](#locations.Id) | [Empty](#locations.Empty) |  |
-| GetAllLocationsDetails | [Empty](#locations.Empty) | [Overviews](#locations.Overviews) |  |
-| GetLocationDetails | [Id](#locations.Id) | [Details](#locations.Details) |  | |
+| List | [Empty](#location.Empty) | [Locations](#location.Locations) |  |
+| Get | [Id](#location.Id) | [Location](#location.Location) |  |
+| Create | [Location](#location.Location) | [Empty](#location.Empty) |  |
+| Update | [Location](#location.Location) | [Location](#location.Location) |  |
+| Delete | [Id](#location.Id) | [Empty](#location.Empty) |  |
+| GetAllLocationsDetails | [Empty](#location.Empty) | [Overviews](#location.Overviews) |  |
+| GetLocationDetails | [Id](#location.Id) | [Details](#location.Details) |  | |
 
 
 
