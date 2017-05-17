@@ -6,8 +6,7 @@ machine:
   environment:
     NODE_ENV: test
     DATABASE_URL: postgres://ubuntu:@127.0.0.1:5432/circle_test
-    COVERALLS_SERVICE_NAME: circle-ci
-    COVERALLS_REPO_TOKEN: htjWluPB25Y9AOtw9GnftNiAxzV5WSdri
+    CODECLIMATE_REPO_TOKEN: 5ff3a5a2935171ab891ea9d43ed80c74ea6bb9550f45534efd3f626cca7fb809
     SERVICE_URL: 0.0.0.0:50062
     TOPIC_NAME: location-topic
     LEVELS_SERVICE_URL: 0.0.0.0:50055
@@ -34,7 +33,7 @@ checkout:
     - git submodule update --init
 test:
   post:
-    - gulp coveralls
+    - gulp codeclimate
 deployment:
   production:
     tag: /v[0-9]+(\.[0-9]+)*/

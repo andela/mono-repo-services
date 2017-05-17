@@ -3,7 +3,7 @@
 const gulp = require('gulp');
 const istanbul = require('gulp-istanbul');
 const mocha = require('gulp-mocha');
-const coveralls = require('gulp-coveralls');
+const codeclimate = require('gulp-codeclimate-reporter');
 const shell = require('gulp-shell');
 const exit = require('gulp-exit');
 require('dotenv').config({ silent: true });
@@ -12,7 +12,6 @@ const server = require('./shared/kafka/server');
 const producer = require('./kafka_producer');
 const usersServer = require('./shared/user/server');
 const levelsServer = require('./shared/level/server');
-require('dotenv').config();
 
 gulp.task('coverage-setup', () => (
   gulp.src(['./controllers/*.js', './models/*.js', './events/*.js'])
@@ -31,9 +30,9 @@ gulp.task('db:migrate', shell.task([
   'node_modules/.bin/sequelize db:migrate',
 ]));
 
-gulp.task('coveralls', () => (
+gulp.task('codeclimate', () => (
   gulp.src('./coverage/lcov.info')
-    .pipe(coveralls())
+    .pipe(codeclimate())
     .pipe(exit())
 ));
 
