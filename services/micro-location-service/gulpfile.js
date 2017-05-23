@@ -32,7 +32,7 @@ gulp.task('db:migrate', shell.task([
 
 gulp.task('codeclimate', () => (
   gulp.src('./coverage/lcov.info')
-    .pipe(codeclimate())
+    .pipe(codeclimate({ token: process.env.CODECLIMATE_REPO_TOKEN }))
     .pipe(exit())
 ));
 

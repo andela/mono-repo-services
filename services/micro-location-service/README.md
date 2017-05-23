@@ -1,6 +1,6 @@
 # Locations Microservice
 
-[![Coverage Status](https://coveralls.io/repos/github/andela/micro-location-service/badge.svg?branch=develop&t=psxwfR)](https://coveralls.io/github/andela/micro-location-service?branch=develop)
+[![Test Coverage](https://codeclimate.com/repos/57b654f43b66cb7670008610/badges/a7458d3dee1b3a198225/coverage.svg)](https://codeclimate.com/repos/57b654f43b66cb7670008610/coverage) [![Code Climate](https://codeclimate.com/repos/57b654f43b66cb7670008610/badges/a7458d3dee1b3a198225/gpa.svg)](https://codeclimate.com/repos/57b654f43b66cb7670008610/feed) [![Issue Count](https://codeclimate.com/repos/57b654f43b66cb7670008610/badges/a7458d3dee1b3a198225/issue_count.svg)](https://codeclimate.com/repos/57b654f43b66cb7670008610/feed)
 
 Location service manages information on Andela fellows centers. Currently Andela is present in two countries i.e Kenya and Nigeria. Functionalities provided by this service are:
 * Create a location
