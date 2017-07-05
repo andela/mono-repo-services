@@ -1,0 +1,28 @@
+{
+  "name": "andela-pubsub",
+  "version": "1.0.0",
+  "description": "a library that will house our pubsub implementation",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andela/andela-pubsub.git"
+  },
+  "keywords": [
+    "pubsub",
+    "microservices",
+    "andela"
+  ],
+  "author": "ikem.okonkwo@andela.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andela/andela-pubsub/issues"
+  },
+  "homepage": "https://github.com/andela/andela-pubsub#readme",
+  "dependencies": {
+    "@google-cloud/pubsub": "^0.13.0",
+    "pushid": "^1.0.0"
+  }
+}
