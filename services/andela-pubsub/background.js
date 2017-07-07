@@ -9,6 +9,7 @@ const logger = require('winston');
 
 const pubsub = Pubsub({
   projectId: process.env.GCLOUD_PROJECT,
+  keyFilename: process.env.GOOGLE_CLOUD_PUBSUB_KEY
 });
 
 // This configuration will automatically create the topic if
