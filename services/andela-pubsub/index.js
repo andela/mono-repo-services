@@ -17,7 +17,6 @@ function subscribe(options, handlers) {
     const payload = message.data;
     const handler = handlers[message.attributes.eventType];
     payload.updatedAt = message.timestamp;
-    console.log('logging event with payload: ', payload);
     if (handler && process.env.NODE_ENV !== 'test') {
       handler(payload, (_err) => {
         if (_err) {
