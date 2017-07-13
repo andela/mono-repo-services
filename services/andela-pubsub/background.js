@@ -62,7 +62,8 @@ function subscribe(options, cb) {
   .then((topics) => {
       topics.forEach((topic, index) => {
         const option = options[index]
-        topic.subscribe(option.subscriptionName, (err, subscription) => {
+        const params = { ackDeadlineSeconds: 300, interval: 60 };
+        topic.subscribe(option.subscriptionName, params, (err, subscription) => {
         if (err) {
             cb(err);
             return;
