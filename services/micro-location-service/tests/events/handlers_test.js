@@ -5,10 +5,6 @@ const Q = require('q');
 const handlers = require('../../events/handlers');
 
 describe('Locations Handler test', () => {
-  afterEach(() => {
-    sinon.restore(models.Location, 'create');
-    sinon.restore(models.Location, 'upsert');
-  });
   describe('LocationCreated: success', () => {
     beforeEach(() => {
       sinon.stub(models.Location, 'create', () => {
@@ -16,6 +12,10 @@ describe('Locations Handler test', () => {
         deferred.resolve({ id: 'some id' });
         return deferred.promise;
       });
+    });
+
+    afterEach(() => {
+      models.Location.create.restore();
     });
 
     it('should return correct data', (done) => {
@@ -43,6 +43,10 @@ describe('Locations Handler test', () => {
       });
     });
 
+    afterEach(() => {
+      models.Location.create.restore();
+    });
+
     it('should not return data', (done) => {
       handlers.createLocation({}, (err, data) => {
         should.not.exist(data);
@@ -66,6 +70,10 @@ describe('Locations Handler test', () => {
         deferred.resolve({ id: 'some id' });
         return deferred.promise;
       });
+    });
+
+    afterEach(() => {
+      models.Location.update.restore();
     });
 
     it('should return correct data', (done) => {
@@ -93,6 +101,10 @@ describe('Locations Handler test', () => {
       });
     });
 
+    afterEach(() => {
+      models.Location.update.restore();
+    });
+
     it('should not return data', (done) => {
       handlers.updateLocation({}, (err, data) => {
         should.not.exist(data);
@@ -118,6 +130,10 @@ describe('Locations Handler test', () => {
       });
     });
 
+    afterEach(() => {
+      models.Location.destroy.restore();
+    });
+
     it('should return correct data', (done) => {
       handlers.destroyLocation({ payload: { location_id: 1 } }, (err, data) => {
         should.exist(data);
@@ -141,6 +157,10 @@ describe('Locations Handler test', () => {
         deferred.reject(new Error('Server Error'));
         return deferred.promise;
       });
+    });
+
+    afterEach(() => {
+      models.Location.destroy.restore();
     });
 
     it('should not return  data', (done) => {

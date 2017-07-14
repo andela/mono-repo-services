@@ -77,7 +77,7 @@ describe('endpoints', () => {
         should.exist(data);
         done();
       });
-    });
+    }).timeout(5000);
   });
 
   describe('#create', () => {

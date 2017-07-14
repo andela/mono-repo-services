@@ -93,19 +93,11 @@ Once PostgreSQL is installed:
 
 ### Launch The App
 
-Andela Systems architecture uses [Kafka](http://kafka.apache.org/) as the message broker. Kafka is simply a middleman between Andela services in terms of getting data from one service to another. A service publishes an event and other services can be able to subscribe to that event if they are dependent on it. To do this
+  Andela Systems architecture uses [Google pub/sub](https://cloud.google.com/pubsub/) as a messaging service. Cloud Pub/Sub is a fully-managed real-time messaging service that allows you to send and receive messages between independent applications. You can leverage Cloud Pub/Sub’s flexibility to decouple systems and components hosted on Google Cloud Platform or elsewhere on the Internet.
 
-- Initiate Kafka & Zookeeper
-  - run `make kafka_install` to install kafka.
-  - run `make kafka_start` to start kafka.
-  - run `make kafka_create` to create `locations-topic` topic on kafka to which records are published. Other services are able to subscribe to this topic.
-- Run `npm start` to start the app.
-
-***
-
-## Creating new endpoints
-Andela Systems architecture implements [CQRS](https://medium.com/technology-learning/event-sourcing-and-cqrs-a-look-at-kafka-e0c1b90d17d8#.ansu5rx8v). Based on this the READ and WRITE operations use different models. We are separating the READ and WRITE concerns whereby for READ operations i.e getting data directly from the database is handled normally whereas for WRITE operations which involve changing the state of data, we employ use of kafka as an eventstore.
-The messages and their data types that we are going to use are clearly defined in the [Protocol buffers documentation](./proto_doc.md)
+  - Initiate pub/sub emulator locally
+    - run `gcloud beta emulators pubsub start` and follow the steps.
+  ***
 
 ### Read Operation endpoint  
 We'll use `get all locations details` operation to map to an endpoint for demonstration purposes  
@@ -190,7 +182,7 @@ We'll use `create location` operation to map to an endpoint for demonstration pu
   }
   ```
 
-  In this case we will use `create` function to map it to the `Create` endpoint. Within that function we can perform validations before emitting the model to kafka.
+  In this case we will use `create` function to map it to the `Create` endpoint. Within that function we can perform validations before emitting the model to pub/sub.
   Navigate to `events/handlers` file to create `createLocation(` event handler.  
   An event handler is able to:  
 

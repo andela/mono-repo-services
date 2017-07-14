@@ -1,0 +1,62 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/workspace
+    docker:
+      - image: gcr.io/andela-docker/ci-builder-base:0.0.0
+        environment:
+          PUBSUB_EMULATOR_HOST: localhost:8085
+          GCLOUD_PROJECT: microservices-kube
+          NODE_ENV: test
+          DATABASE_URL: postgres://ubuntu@localhost:5432/circle_test
+          SERVICE_URL: 0.0.0.0:50050
+          PROJECT_NAME: microservices-kube
+          CLUSTER_NAME: staging
+          CLOUDSDK_COMPUTE_ZONE: us-east1-c
+          CONTAINER_NAME: location
+          DEPLOYMENT: location
+          IMAGE: location
+          PROJECT_NAME_PROD: andela-kube
+          CLUSTER_NAME_PROD: andela-prod
+          CLOUDSDK_COMPUTE_ZONE_PROD: us-east1-b
+          CONTAINER_NAME_PROD: location
+          DEPLOYMENT_PROD: location
+          IMAGE_PROD: location
+          GRPC_HEALTH_CHECK_TAG: 1.0.1
+          DOCKER_PROJECT_NAME: nodejs-docker
+          TAG: v1.0.0
+          USE_CIRCLECI_BETA: yes
+      - image: postgres:9.6-alpine
+        environment:
+          POSTGRES_USER: ubuntu
+          POSTGRES_DB: circle_test
+          POSTGRES_PASSWORD: ""
+      - image: knarz/pubsub-emulator
+    steps:
+      - checkout
+      - run:
+          name: Update Submodule
+          command: git submodule sync && git submodule update --init
+      - setup_remote_docker
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install Packages
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: Run Tests
+          command: npm test
+      - run:
+          name: Push Coverage to CodeClimate
+          command: |
+            node_modules/.bin/gulp codeclimate
+      - deploy:
+          name: Deploy service
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ] || [ "${CIRCLE_BRANCH}" == "develop" ]; then
+              ./shared/deployment.sh
+            fi

@@ -1,6 +1,6 @@
 const models = global.models;
 const logger = require('winston');
-const producer = require('../kafka_producer');
+const producer = require('andela-pubsub').producer;
 const _ = require('lodash');
 const grpc = require('grpc');
 const async = require('async');
@@ -50,14 +50,13 @@ module.exports = {
     const metadata = camelcaseKeys(call.metadata.getMap());
     models.Location.findById(payload.id).then((location) => {
       if (location) {
+        metadata.eventType = 'LocationUpdatedEvent';
         const message = {
-          eventType: 'LocationUpdatedEvent',
-          payload,
-          authorId: metadata.authorId,
-          authorName: metadata.authorName,
+          data: payload,
+          attributes: metadata,
         };
 
-        producer.emitModel(models.Location, message, (err, response) => {
+        producer.emitModel(models.Location, message, 'location', (err, response) => {
           callback(err, response);
         });
       } else {
@@ -72,29 +71,28 @@ module.exports = {
   create(call, callback) {
     const metadata = camelcaseKeys(call.metadata.getMap());
     const payload = _.pick(call.request, 'id', 'name', 'timeZone');
+    metadata.eventType = 'LocationCreatedEvent';
     const message = {
-      eventType: 'LocationCreatedEvent',
-      payload,
-      authorId: metadata.authorId,
-      authorName: metadata.authorName,
+      data: payload,
+      attributes: metadata,
     };
-    producer.emitModel(models.Location, message, (err, response) => {
+    producer.emitModel(models.Location, message, 'location', (err, response) => {
       callback(err, response);
     });
   },
 
   destroy(call, callback) {
     const metadata = camelcaseKeys(call.metadata.getMap());
+    const payload = { id: call.request.id };
     models.Location.findById(call.request.id).then((location) => {
       if (location) {
+        metadata.eventType = 'LocationDeletedEvent';
         const message = {
-          eventType: 'LocationDeletedEvent',
-          payload: { id: call.request.id },
-          authorId: metadata.authorId,
-          authorName: metadata.authorName,
+          data: payload,
+          attributes: metadata,
         };
 
-        producer.emit(message, (err) => {
+        producer.emit(message, 'location', (err) => {
           callback(err, {});
         });
       } else {

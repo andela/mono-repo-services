@@ -3,7 +3,8 @@ const sinon = require('sinon');
 const Q = require('q');
 const grpc = require('grpc');
 const controller = require('../../controllers/locations_controller');
-const producer = require('../../kafka_producer');
+const producer = require('andela-pubsub').producer;
+
 const metadata = new grpc.Metadata();
 
 const models = global.models;
@@ -24,15 +25,7 @@ const locations = [
   },
 ];
 
-
 describe('Locations controllers', () => {
-  afterEach(() => {
-    sinon.restore(models.Location, 'findAll');
-    sinon.restore(models.Location, 'findById');
-    sinon.restore(producer, 'emit');
-    sinon.restore(grpc, 'load');
-  });
-
   describe('List all Locations: Success', () => {
     beforeEach(() => {
       sinon.stub(models.Location, 'findAll', () => {
@@ -40,6 +33,10 @@ describe('Locations controllers', () => {
         deferred.resolve(locations);
         return deferred.promise;
       });
+    });
+
+    afterEach(() => {
+      models.Location.findAll.restore();
     });
 
     it('should not return error', (done) => {
@@ -75,6 +72,9 @@ describe('Locations controllers', () => {
       });
     });
 
+    afterEach(() => {
+      models.Location.findAll.restore();
+    });
 
     it('should contain correct error message', (done) => {
       controller.index({}, (err, result) => {
@@ -93,6 +93,10 @@ describe('Locations controllers', () => {
         deferred.resolve(locations[0]);
         return deferred.promise;
       });
+    });
+
+    afterEach(() => {
+      models.Location.findById.restore();
     });
 
     it('should not return error', (done) => {
@@ -128,6 +132,10 @@ describe('Locations controllers', () => {
       });
     });
 
+    afterEach(() => {
+      models.Location.findById.restore();
+    });
+
     it('should return error', (done) => {
       controller.show(call, (err) => {
         should.exist(err);
@@ -152,6 +160,10 @@ describe('Locations controllers', () => {
         deferred.resolve(null);
         return deferred.promise;
       });
+    });
+
+    afterEach(() => {
+      models.Location.findById.restore();
     });
 
     it('should return error', (done) => {
@@ -186,9 +198,14 @@ describe('Locations controllers', () => {
         return deferred.promise;
       });
 
-      sinon.stub(producer, 'emitModel', (model, data, cb) => {
+      sinon.stub(producer, 'emitModel', (model, data, location, cb) => {
         cb(null, {});
       });
+    });
+
+    afterEach(() => {
+      models.Location.findById.restore();
+      producer.emitModel.restore();
     });
 
     it('should not return error', (done) => {
@@ -216,9 +233,14 @@ describe('Locations controllers', () => {
         return deferred.promise;
       });
 
-      sinon.stub(producer, 'emitModel', (model, data, cb) => {
+      sinon.stub(producer, 'emitModel', (model, data, location, cb) => {
         cb(null, {});
       });
+    });
+
+    afterEach(() => {
+      models.Location.findById.restore();
+      producer.emitModel.restore();
     });
 
     it('should return error', (done) => {
@@ -240,9 +262,14 @@ describe('Locations controllers', () => {
         return deferred.promise;
       });
 
-      sinon.stub(producer, 'emitModel', (model, data, cb) => {
+      sinon.stub(producer, 'emitModel', (model, data, location, cb) => {
         cb(null, {});
       });
+    });
+
+    afterEach(() => {
+      models.Location.findById.restore();
+      producer.emitModel.restore();
     });
 
     it('should return data', (done) => {
@@ -264,9 +291,14 @@ describe('Locations controllers', () => {
         return deferred.promise;
       });
 
-      sinon.stub(producer, 'emit', (data, cb) => {
+      sinon.stub(producer, 'emit', (data, location, cb) => {
         cb(null, {});
       });
+    });
+
+    afterEach(() => {
+      models.Location.findById.restore();
+      producer.emit.restore();
     });
 
     it('should return data', (done) => {
@@ -288,9 +320,14 @@ describe('Locations controllers', () => {
         return deferred.promise;
       });
 
-      sinon.stub(producer, 'emit', (data, cb) => {
+      sinon.stub(producer, 'emit', (data, location, cb) => {
         cb(null, {});
       });
+    });
+
+    afterEach(() => {
+      models.Location.findById.restore();
+      producer.emit.restore();
     });
 
     it('should return error', (done) => {
@@ -312,6 +349,10 @@ describe('Locations controllers', () => {
       });
     });
 
+    afterEach(() => {
+      models.Location.findAll.restore();
+    });
+
     it('should return the correct data', (done) => {
       controller.allLocationsDetails({}, (err, result) => {
         const data = result.values;
@@ -330,6 +371,10 @@ describe('Locations controllers', () => {
         deferred.resolve(locations[0]);
         return deferred.promise;
       });
+    });
+
+    afterEach(() => {
+      models.Location.findById.restore();
     });
 
     it('should return correct count of data', (done) => {

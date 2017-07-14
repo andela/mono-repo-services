@@ -8,8 +8,7 @@ const shell = require('gulp-shell');
 const exit = require('gulp-exit');
 require('dotenv').config({ silent: true });
 global.models = require('./models');
-const server = require('./shared/kafka/server');
-const producer = require('./kafka_producer');
+const server = require('./server');
 const usersServer = require('./shared/user/server');
 const levelsServer = require('./shared/level/server');
 
@@ -36,8 +35,6 @@ gulp.task('codeclimate', () => (
     .pipe(exit())
 ));
 
-gulp.task('start:producer', () => producer.start());
-
 gulp.task('server:test', ['db:migrate', 'coverage-setup'], () => (
   gulp.src(
     [
@@ -56,7 +53,7 @@ gulp.task('server:test', ['db:migrate', 'coverage-setup'], () => (
     }))
 ));
 
-gulp.task('test', ['start:producer', 'start:server', 'start:dependent', 'server:test'], () => {
+gulp.task('test', ['start:server', 'start:dependent', 'server:test'], () => {
   exit();
   usersServer.forceShutdown();
   levelsServer.forceShutdown();

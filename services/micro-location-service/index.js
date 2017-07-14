@@ -1,12 +1,16 @@
 require('dotenv').config({ silent: true });
 global.models = require('./models');
 const server = require('./server');
-const eventHandlers = require('./events');
 const hystrixMetrics = require('./hystrix_metrics');
 const logger = require('winston');
 const pg = require('pg');
+const pubsub = require('andela-pubsub');
+
 const dbName = process.env.POSTGRES_DB;
 const templateDB = process.env.TEMPLATE_DB;
+const handlers = require('./events/register');
+
+pubsub.subscribe([{ topicName: 'location', subscriptionName: 'location' }], handlers);
 
 if (dbName && templateDB) {
   const client = new pg.Client(templateDB);
@@ -20,6 +24,5 @@ if (dbName && templateDB) {
   ));
 }
 
-eventHandlers.start();
 server.start();
 hystrixMetrics.start();
