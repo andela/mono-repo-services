@@ -63,7 +63,8 @@ function subscribe(options, cb) {
       topics.forEach((topic, index) => {
         const option = options[index]
         const params = { ackDeadlineSeconds: 300, interval: 60 };
-        topic.subscribe(option.subscriptionName, params, (err, subscription) => {
+        const fullName = `${option.topicName}_${option.subscriptionName}`;
+        topic.subscribe(fullName, params, (err, subscription) => {
         if (err) {
             cb(err);
             return;
@@ -73,7 +74,7 @@ function subscribe(options, cb) {
         subscription.on('message', handleMessage);
         subscription.on('error', handleError);
         subscriptions.push(subscription);
-        logger.info(`Listening to ${option.topicName} with subscription ${option.subscriptionName}`);
+        logger.info(`Listening to ${option.topicName} with subscription ${option.topicName}_${option.subscriptionName}`);
         });
       });
   })
