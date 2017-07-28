@@ -62,5 +62,6 @@ compose:
 
 bootstrap:
 	git submodule update --init && cd shared && git checkout develop && cd ..
+	./shared/compose/bootstrap.sh
 	rm -rf node_modules
 	cp docker-compose.override.yml.sample docker-compose.override.yml

@@ -57,6 +57,10 @@ To sync the submodule (`/shared`) run:
 ```
 git submodule update --init
 ```
+Or run
+```
+make shared
+```
 
 
 ### Setup your database
@@ -98,6 +102,82 @@ Once PostgreSQL is installed:
   - Initiate pub/sub emulator locally
     - run `gcloud beta emulators pubsub start` and follow the steps.
   ***
+
+### Running the Application Locally via Docker Compose
+Ensure you have at least version 1.13.1 of Docker. Install the latest version from [here](https://www.docker.com/products/overview)
+**TLDR;** For the first time, run
+```
+make bootstrap
+```
+
+Generate the docker-compose.yml file by running:
+
+```
+make gen_compose
+```
+
+Copy docker-compose.override.yml.sample to docker-compose.override.yml by running:
+```
+cp docker-compose.override.yml.sample docker-compose.override.yml
+```
+
+The generation of the docker-compose is done using a Python package called `envtpl`. If you do not have it already, install it with:
+
+```bash
+pip install envtpl
+```
+
+Map `localhost` to `api-dev.andela.com` by adding a new line in your `etc/hosts` file with:
+
+```
+127.0.0.1 api-dev.andela.com
+```
+You will need superuser permissions to do that.
+
+After the docker-compose file has been generated, run the application with:
+
+```
+make compose
+```
+This will start and run all dependent containers.
+
+>`make compose` task first runs `gcloud docker -a` which gives Docker temporary access to our
+private registry. **NOTE**: for this first command to succeed you have to be authenticated
+by running  `gcloud auth`. Next up will be `docker-compose pull --ignore-pull-failures`
+that pulls the latest images of the dependent services followed by `docker-compose up -d postgres kafka`
+that starts up kafka and postgres. Finally we have `docker-compose up -d api-gateway` that starts up
+the api-gateway.
+
+
+
+Start up the location service by running:
+```
+docker-compose up -d location-svc
+```
+
+View the location service logs by running:
+```
+docker-compose logs -f location-svc
+```
+
+#### Stopping Docker Compose
+
+Stop a running instance of micro-location-service with:
+```
+docker-compose stop location-svc
+```
+
+To stop all running containers, run:
+```
+docker-compose down -v
+```
+
+### Updating Docker Compose Files
+> Never update docker-compose.yml file directly since it's generated. Modify
+micro-shared/compose/docker-compose.yml.jinja instead and regenerate using `make gen_compose`.
+To add more dependent MS, simply modify the gen_compose make task in the Makefile and regenerate docker-compose.yml file. To override docker-compose configuration, simple add needed changes to docker-compose.override.yml file. Note that this file is git ignored. You can modify it anyway you want to suit your taste. Docker-compose uses both files by default.
+
+***
 
 ### Read Operation endpoint  
 We'll use `get all locations details` operation to map to an endpoint for demonstration purposes  
