@@ -1,0 +1,31 @@
+{
+  "name": "epic_logger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andela/epic-logger-node.git"
+  },
+  "keywords": [
+    "logger",
+    "bugsnag",
+    "stackdriver",
+    "json",
+    "text"
+  ],
+  "author": "ikem.okonkwo@andela.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andela/epic-logger-node/issues"
+  },
+  "homepage": "https://github.com/andela/epic-logger-node#readme",
+  "dependencies": {
+    "lodash.mapvalues": "^4.6.0",
+    "winston": "^2.3.1",
+    "winston-bugsnag": "^3.0.2"
+  }
+}
