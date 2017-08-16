@@ -3,6 +3,7 @@ const util = require('util');
 const winston = require('winston');
 const Transport = require('winston/lib/winston/transports/transport').Transport;
 const os = require('os');
+const VError = require('verror').VError;
 
 
 /**
@@ -95,6 +96,11 @@ class EpicTransport extends Transport {
     if (levelCode > this.levels_[this.level]) {
       return callback(null, true);
     };
+
+    if (metadata && metadata instanceof VError) {
+      message += (message ? ' \n ' : '') + VError.fullStack(metadata);
+      metadata = {};
+    };
    
     if (metadata && metadata.stack) {
        message += (message ? ' \n ' : '') + metadata.stack;
@@ -143,7 +149,10 @@ class EpicTransport extends Transport {
     if (Object.keys(metadata).length) {
       data.metadata = mapValues(metadata, util.inspect);
     }
-    console.log(JSON.stringify(data));
+    if (isError) {
+      return console.error(JSON.stringify(data));
+    }
+    return console.log(JSON.stringify(data));
   }
 
     /**
@@ -165,7 +174,10 @@ class EpicTransport extends Transport {
         output += `: ${metadata[key]}   \n`
       })
     };
-   console.log(output);
+    if (isError) {
+      return console.error(output);
+    }
+   return console.log(output);
   }
 }
 

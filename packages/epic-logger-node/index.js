@@ -2,6 +2,7 @@ const winston = require('winston');
 const EpicTransport = require('./epic_transport');
 const winstonBugsnag = require('winston-bugsnag');
 const env = process.env.NODE_ENV || 'development';
+const VError = require('verror').VError;
 
 const podName = process.env.POD_NAME || 'myService-1'
 const values = podName.split('-')
@@ -31,7 +32,18 @@ if (env === 'production') {
   winston.add(winstonBugsnag);
 }
 
-
 winston.setLevels(winston.config.syslog.levels);
+
+// monkey patch error and crit winston methods
+['error', 'crit'].forEach((target) => {
+  var method = winston[target];
+  winston[target] = function() {
+    let args = Array.prototype.slice.call(arguments);
+    if (args && args[0] && args[0] instanceof VError) {
+      args = [VError.fullStack(args[0])].concat(args.slice(1));
+    }
+    method.apply(this, args);
+  }
+});
 
 module.exports = winston;
