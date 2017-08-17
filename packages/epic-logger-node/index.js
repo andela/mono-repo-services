@@ -3,6 +3,7 @@ const EpicTransport = require('./epic_transport');
 const winstonBugsnag = require('winston-bugsnag');
 const env = process.env.NODE_ENV || 'development';
 const VError = require('verror').VError;
+const bugsnag = require('bugsnag');
 
 const podName = process.env.POD_NAME || 'myService-1';
 const values = podName.split('-');
