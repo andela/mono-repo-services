@@ -22,7 +22,7 @@ winston.configure({
         level,
         serviceContext,
         levels: winston.config.syslog.levels,
-      },
+      }
     ),
   ],
 });
