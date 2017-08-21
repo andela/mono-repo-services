@@ -5,12 +5,12 @@ const getTopic = require('./background').getTopic;
 
 
 module.exports = {
-  emitModel(model, message, topicName, cb) {
+  emitModel(model, message, topicName, metadata, cb) {
     message.data.id = message.data.id || fancyID();
     model
     .build(message.data)
     .validate().then(() => {
-      this.emit(message, topicName, cb);
+      this.emit(message, topicName, metadata, cb);
     })
     .catch((validateErr) => {
       logger.error(validateErr.message);
@@ -18,7 +18,7 @@ module.exports = {
       cb({ message: validateErr.message, code: 3 });
     })
   },
-  emit(message, topicName, cb) {
+  emit(message, topicName, metadata, cb) {
     message.data.id = message.data.id || fancyID();
     message.attributes.timestamp = (new Date()).toISOString();
     delete message.attributes.permissions;

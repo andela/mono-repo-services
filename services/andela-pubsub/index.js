@@ -40,9 +40,10 @@ function subscribe(options, handlers) {
 
     const payload = message.data;
     const handler = handlers[message.attributes.eventType];
+    const metadata = { eventType: message.attributes.eventType, userId: message.attributes.authorId, correlationId: message.attributes.correlationId };
     payload.updatedAt = message.timestamp;
     if (handler && process.env.NODE_ENV !== 'test') {
-      handler(payload, (_err) => {
+      handler(payload, metadata, (_err) => {
         if (_err) {
           logErr(message.attributes, handler.name, _err);
         } else {
