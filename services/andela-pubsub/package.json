@@ -23,6 +23,8 @@
   "homepage": "https://github.com/andela/andela-pubsub#readme",
   "dependencies": {
     "@google-cloud/pubsub": "^0.13.0",
-    "pushid": "^1.0.0"
+    "epic_logger": "github:andela/epic-logger-node",
+    "pushid": "^1.0.0",
+    "verror": "^1.10.0"
   }
 }
