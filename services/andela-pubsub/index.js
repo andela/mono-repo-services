@@ -1,30 +1,9 @@
 const producer = require('./producer');
-const logger = require('winston');
 const background = require('./background');
+const VError = require('verror');
+const logger = require('epic_logger');
 
 const podName = process.env.POD_NAME || 'no-pod-name'
-
-function logErr(attributes, handlerName, err) {
-  console.log(
-    JSON.stringify({
-      eventTime: (new Date()).toISOString(),
-      message: err.stack,
-      severity: 'ERROR',
-      serviceContext: {
-        service: podName.split('-')[0],
-        version: podName.split('-')[1],
-      },
-      context: {
-        httpRequest: {
-          method: 'POST',
-          url: handlerName,
-          referrer: attributes.eventType,
-        },
-        user: attributes.authorEmail,
-      }
-    })
-  )
-}
 
 function subscribe(options, handlers) {
   // Subscribe to Cloud Pub/Sub and receive messages to process.
@@ -34,7 +13,7 @@ function subscribe(options, handlers) {
   const unsubscribeFn = background.subscribe(options, (err, message) => {
     // Any errors received are considered fatal.
     if (err) {
-      logger.error(err);
+      logger.error(new VError(err), 'failed to subscribe to topic');
       throw err;
     }
 
@@ -43,14 +22,11 @@ function subscribe(options, handlers) {
     const metadata = { eventType: message.attributes.eventType, userId: message.attributes.authorId, correlationId: message.attributes.correlationId };
     payload.updatedAt = message.timestamp;
     if (handler && process.env.NODE_ENV !== 'test') {
-      handler(payload, metadata, (_err) => {
+      handler(payload, (_err) => {
         if (_err) {
-          logErr(message.attributes, handler.name, _err);
+          logger.error(new VError(_err, 'failed to process event'), message.attributes);
         } else {
-          logger.info('finished processing ',
-            message.attributes.eventType,
-            ', key ', message.data.id
-          );
+          logger.info('finished processing event', message.attributes);
           message.ack();
         }
       }, message.attributes);

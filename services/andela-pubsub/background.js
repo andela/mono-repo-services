@@ -1,11 +1,11 @@
 const Pubsub = require('@google-cloud/pubsub');
+const VError = require('verror');
+const logger = require('epic_logger');
 
 // const topicName = process.env.TOPIC_NAME;
 // const topicName = 'authorization';
 // const subscriptionName = process.env.SUBSCRIPTION_NAME;
 const subscriptionName = 'authorization';
-
-const logger = require('winston');
 
 const pubsub = Pubsub({
   projectId: process.env.GCLOUD_PROJECT,
@@ -53,30 +53,29 @@ function subscribe(options, cb) {
     cb(null, message);
   }
   function handleError(err) {
-    logger.error(err);
+    logger.error(new VError(err), 'failed to handle pubsub message');
     cb(err);
   }
   const topicPromises = options.map(option => getTopic(option.topicName));
 
   Promise.all(topicPromises)
   .then((topics) => {
-      topics.forEach((topic, index) => {
-        const option = options[index]
-        const params = { ackDeadlineSeconds: 300, interval: 60 };
-        const fullName = `${option.topicName}_${option.subscriptionName}`;
-        topic.subscribe(fullName, params, (err, subscription) => {
-        if (err) {
-            cb(err);
-            return;
-        }
+    topics.forEach((topic, index) => {
+      const option = options[index]
+      const params = { ackDeadlineSeconds: 300, interval: 60 };
+      const fullName = `${option.topicName}_${option.subscriptionName}`;
+      topic.subscribe(fullName, params, (err, subscription) => {
+      if (err) {
+        return cb(err);
+      }
 
-        // Listen to and handle message and error events
-        subscription.on('message', handleMessage);
-        subscription.on('error', handleError);
-        subscriptions.push(subscription);
-        logger.info(`Listening to ${option.topicName} with subscription ${option.topicName}_${option.subscriptionName}`);
-        });
+      // Listen to and handle message and error events
+      subscription.on('message', handleMessage);
+      subscription.on('error', handleError);
+      subscriptions.push(subscription);
+      logger.info(`Listening to ${option.topicName} with subscription ${option.topicName}_${option.subscriptionName}`);
       });
+    });
   })
   .catch(cb);
 
