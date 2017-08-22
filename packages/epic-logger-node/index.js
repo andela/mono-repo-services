@@ -23,6 +23,7 @@ const transports = [
       format,
       level,
       serviceContext,
+      handleExceptions: true,
       levels: winston.config.syslog.levels
     }),
   ];
