@@ -22,14 +22,14 @@ function subscribe(options, handlers) {
     const metadata = { eventType: message.attributes.eventType, userId: message.attributes.authorId, correlationId: message.attributes.correlationId };
     payload.updatedAt = message.timestamp;
     if (handler && process.env.NODE_ENV !== 'test') {
-      handler(payload, (_err) => {
+      handler(payload,  message.attributes, (_err) => {
         if (_err) {
           logger.error(new VError(_err, 'failed to process event'), message.attributes);
         } else {
           logger.info('finished processing event', message.attributes);
           message.ack();
         }
-      }, message.attributes);
+      });
     } else {
       message.ack();
     }
