@@ -50,4 +50,9 @@ winston.setLevels(winston.config.syslog.levels);
   };
 });
 
+
+process.on('unhandledRejection', function (err) {
+    winston.error(err, { cause: 'unhandled rejection' });
+});
+
 module.exports = winston;
