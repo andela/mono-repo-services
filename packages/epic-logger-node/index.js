@@ -29,7 +29,7 @@ const transports = [
 
 if (env === 'production') {
   bugsnag.register(process.env.BUGSNAG_API_KEY);
-  transports.push(BugsnagTransport);
+  transports.push(new BugsnagTransport());
 }
 winston.configure({ transports });
 
