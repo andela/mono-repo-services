@@ -18,22 +18,22 @@ if (env === 'staging' || env === 'production') {
   format = 'json';
   level = 'info';
 }
-
-winston.configure({
-  transports: [
+const transports = [
     new EpicTransport({
       format,
       level,
       serviceContext,
       levels: winston.config.syslog.levels
     }),
-  ],
-});
+  ];
 
 if (env === 'production') {
   bugsnag.register(process.env.BUGSNAG_API_KEY);
-  winston.add(winstonBugsnag);
+  transports.push(winstonBugsnag);
 }
+winston.configure({ transports });
+
+
 
 winston.setLevels(winston.config.syslog.levels);
 
