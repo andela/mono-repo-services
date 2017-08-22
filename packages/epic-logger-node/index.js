@@ -1,7 +1,7 @@
 const bugsnag = require('bugsnag');
 const winston = require('winston');
 const EpicTransport = require('./epic_transport');
-const winstonBugsnag = require('winston-bugsnag');
+const BugsnagTransport = require('winston-bugsnag').BugsnagTransport;
 const env = process.env.NODE_ENV || 'development';
 const VError = require('verror').VError;
 
@@ -29,7 +29,7 @@ const transports = [
 
 if (env === 'production') {
   bugsnag.register(process.env.BUGSNAG_API_KEY);
-  transports.push(winstonBugsnag);
+  transports.push(BugsnagTransport);
 }
 winston.configure({ transports });
 
