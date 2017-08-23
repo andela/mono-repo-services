@@ -1,4 +1,4 @@
-# Locations Microservice
+# micro-location-service
 
 [![Test Coverage](https://codeclimate.com/repos/57b654f43b66cb7670008610/badges/a7458d3dee1b3a198225/coverage.svg)](https://codeclimate.com/repos/57b654f43b66cb7670008610/coverage) [![Code Climate](https://codeclimate.com/repos/57b654f43b66cb7670008610/badges/a7458d3dee1b3a198225/gpa.svg)](https://codeclimate.com/repos/57b654f43b66cb7670008610/feed) [![Issue Count](https://codeclimate.com/repos/57b654f43b66cb7670008610/badges/a7458d3dee1b3a198225/issue_count.svg)](https://codeclimate.com/repos/57b654f43b66cb7670008610/feed)
 
