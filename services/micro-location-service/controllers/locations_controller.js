@@ -214,7 +214,8 @@ module.exports = {
           });
       },
       (prev, step) => {
-        usersClient.getUsersCountPerLevelByLocation({ id: locationID }, call.metadata, (err, result) => {
+        usersClient.getUsersCountPerLevelByLocation({ id: locationID },
+        call.metadata, (err, result) => {
           step(null, result.values);
         });
       },
