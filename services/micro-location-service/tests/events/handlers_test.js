@@ -3,6 +3,9 @@ const sinon = require('sinon');
 const should = require('chai').Should();
 const Q = require('q');
 const handlers = require('../../events/handlers');
+const grpc = require('grpc');
+
+const metadata = new grpc.Metadata();
 
 describe('Locations Handler test', () => {
   describe('LocationCreated: success', () => {
@@ -19,7 +22,7 @@ describe('Locations Handler test', () => {
     });
 
     it('should return correct data', (done) => {
-      handlers.createLocation({}, (err, data) => {
+      handlers.createLocation({}, metadata, (err, data) => {
         should.exist(data);
         data.should.equal('some id');
         done();
@@ -48,14 +51,14 @@ describe('Locations Handler test', () => {
     });
 
     it('should not return data', (done) => {
-      handlers.createLocation({}, (err, data) => {
+      handlers.createLocation({}, metadata, (err, data) => {
         should.not.exist(data);
         done();
       });
     });
 
     it('error should not exist', (done) => {
-      handlers.createLocation({}, (err) => {
+      handlers.createLocation({}, metadata, (err) => {
         should.exist(err);
         err.message.should.equal('Error occured');
         done();
@@ -77,7 +80,7 @@ describe('Locations Handler test', () => {
     });
 
     it('should return correct data', (done) => {
-      handlers.updateLocation({}, (err, data) => {
+      handlers.updateLocation({}, metadata, (err, data) => {
         should.exist(data);
         data.should.equal('some id');
         done();
@@ -106,14 +109,14 @@ describe('Locations Handler test', () => {
     });
 
     it('should not return data', (done) => {
-      handlers.updateLocation({}, (err, data) => {
+      handlers.updateLocation({}, metadata, (err, data) => {
         should.not.exist(data);
         done();
       });
     });
 
     it('should error should not exist', (done) => {
-      handlers.updateLocation({}, (err) => {
+      handlers.updateLocation({}, metadata, (err) => {
         should.exist(err);
         err.message.should.equal('Server Error');
         done();
@@ -135,7 +138,7 @@ describe('Locations Handler test', () => {
     });
 
     it('should return correct data', (done) => {
-      handlers.destroyLocation({ payload: { location_id: 1 } }, (err, data) => {
+      handlers.destroyLocation({ payload: { location_id: 1 } }, metadata, (err, data) => {
         should.exist(data);
         data.should.deep.equal({});
         done();
@@ -164,14 +167,14 @@ describe('Locations Handler test', () => {
     });
 
     it('should not return  data', (done) => {
-      handlers.destroyLocation({ payload: { location_id: 1 } }, (err, data) => {
+      handlers.destroyLocation({ payload: { location_id: 1 } }, metadata, (err, data) => {
         should.not.exist(data);
         done();
       });
     });
 
     it('should error should not exist', (done) => {
-      handlers.destroyLocation({ payload: { location_id: 1 } }, (err) => {
+      handlers.destroyLocation({ payload: { location_id: 1 } }, metadata, (err) => {
         should.exist(err);
         err.message.should.equal('Server Error');
         done();

@@ -40,14 +40,14 @@ describe('Locations controllers', () => {
     });
 
     it('should not return error', (done) => {
-      controller.index({}, (err) => {
+      controller.index({ metadata }, (err) => {
         should.not.exist(err);
         done();
       });
     });
 
     it('should return locations data', (done) => {
-      controller.index({}, (err, loc) => {
+      controller.index({ metadata }, (err, loc) => {
         should.exist(loc);
         const data = loc.values;
         data[0].name.should.equal('Lagos');
@@ -56,7 +56,7 @@ describe('Locations controllers', () => {
     });
 
     it('should contain correct data count', (done) => {
-      controller.index({}, (err, result) => {
+      controller.index({ metadata }, (err, result) => {
         result.values.length.should.equal(2);
         done();
       });
@@ -77,7 +77,7 @@ describe('Locations controllers', () => {
     });
 
     it('should contain correct error message', (done) => {
-      controller.index({}, (err, result) => {
+      controller.index({ metadata }, (err, result) => {
         should.not.exist(result);
         err.message.should.equal('Something happened');
         done();
@@ -86,7 +86,7 @@ describe('Locations controllers', () => {
   });
 
   describe('Get a Location: success', () => {
-    const call = { metadata: {}, request: { id: '-KPE-AopjdUJrbOELUuk' } };
+    const call = { metadata, request: { id: '-KPE-AopjdUJrbOELUuk' } };
     beforeEach(() => {
       sinon.stub(models.Location, 'findById', () => {
         const deferred = Q.defer();
@@ -123,7 +123,7 @@ describe('Locations controllers', () => {
   });
 
   describe('Get a user: failure', () => {
-    const call = { metadata: {}, request: { id: 1 } };
+    const call = { metadata, request: { id: 1 } };
     beforeEach(() => {
       sinon.stub(models.Location, 'findById', () => {
         const deferred = Q.defer();
@@ -153,7 +153,7 @@ describe('Locations controllers', () => {
   });
 
   describe('Location not found', () => {
-    const call = { metadata: {}, request: { id: '-KPE-AopjdUJrbOELUuk' } };
+    const call = { metadata, request: { id: '-KPE-AopjdUJrbOELUuk' } };
     beforeEach(() => {
       sinon.stub(models.Location, 'findById', () => {
         const deferred = Q.defer();
@@ -354,7 +354,7 @@ describe('Locations controllers', () => {
     });
 
     it('should return the correct data', (done) => {
-      controller.allLocationsDetails({}, (err, result) => {
+      controller.allLocationsDetails({ metadata }, (err, result) => {
         const data = result.values;
         data.length.should.equal(2);
         data[0].title.should.equal('Lagos');
@@ -378,7 +378,8 @@ describe('Locations controllers', () => {
     });
 
     it('should return correct count of data', (done) => {
-      controller.getLocationDetails({ request: { id: '-KPE-AopjdUJrbOELUuk' } }, (err, data) => {
+      controller.getLocationDetails({ request: { id: '-KPE-AopjdUJrbOELUuk' }, metadata },
+      (err, data) => {
         data.values.length.should.equal(2);
         data.values[0].name.should.equal('D0B-SIMULATIONS');
         data.values[0].count.should.equal(13);
