@@ -11,17 +11,13 @@
 const grpc = require('grpc');
 const locationsController = require('../controllers/locations_controller');
 const healthCheck = require('micro-health-check');
-const podName = process.env.POD_NAME;
+const logger = require('epic_logger');
 const root = require('path').join(__dirname, '..', 'shared');
 
-const bugsnag = require('bugsnag');
-const winston = require('winston');
-const winstonBugsnag = require('winston-bugsnag');
+grpc.setLogger(logger);
+grpc.setLogVerbosity(1);
 
-if (process.env.NODE_ENV === 'production') {
-  bugsnag.register(process.env.BUGSNAG_API_KEY);
-  winston.add(winstonBugsnag);
-}
+const podName = process.env.POD_NAME;
 
 const proto = grpc.load(
   { root, file: 'location/location-svc.proto' },

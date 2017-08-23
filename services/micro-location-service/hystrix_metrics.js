@@ -1,6 +1,7 @@
 const app = require('express')();
-const logger = require('winston');
+const logger = require('epic_logger');
 const hystrixStream = require('hystrixjs').hystrixSSEStream;
+const VError = require('verror');
 
 
 function hystrixStreamResponse(request, response) {
@@ -9,7 +10,7 @@ function hystrixStreamResponse(request, response) {
   response.append('Pragma', 'no-cache');
   return hystrixStream.toObservable().subscribe(
     (sseData) => response.write(`data: ${sseData}\n\n`),
-    (error) => logger.error(error),
+    (error) => logger.error(new VError(error, 'Failed to subscribe to stream')),
     () => response.end()
   );
 }

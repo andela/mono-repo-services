@@ -3,17 +3,16 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const lodash = require('lodash');
+const logger = require('epic_logger');
+const VError = require('verror').VError;
 
 const basename = path.basename(module.filename);
-const logger = require('winston');
 const config = require('../database')[env];
 require('dotenv').config();
 
 const db = {};
 const options = {
-  /* eslint-disable no-console */
-  logging: console.log,
-  /* eslint-enable no-console */
+  logging: msg => logger.info(msg),
   benchmark: true,
   dialect: config.dialect,
 };
@@ -44,7 +43,7 @@ function messageProcessed(msgInfo) {
     }
     return false;
   }).catch((err) => {
-    logger.error(err.message);
+    logger.error(new VError(err));
     return false;
   });
 }
