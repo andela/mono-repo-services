@@ -1,10 +1,11 @@
 const models = global.models;
-const logger = require('winston');
+const logger = require('epic_logger');
 const producer = require('andela-pubsub').producer;
 const _ = require('lodash');
 const grpc = require('grpc');
 const async = require('async');
 const camelcaseKeys = require('camelcase-keys');
+const VError = require('verror');
 const sharedRootPath = require('path').join(__dirname, '..', 'shared');
 
 const levelsProto = grpc.load({ root: sharedRootPath, file: 'level/level-svc.proto' });
@@ -20,18 +21,31 @@ const usersClient = new usersProto.user.UserService(
 
 module.exports = {
   index(call, callback) {
+    const grpcMetadata = camelcaseKeys(call.metadata.getMap());
+    const logMetadata = {
+      userId: grpcMetadata.authorId,
+      correlationId: grpcMetadata.correlationId,
+      endpoint: 'List',
+    };
     models.Location.findAll({ raw: true }).then((locations) => {
       const values = locations.map(location => (
         models.stringifyDates(location)
       ));
       callback(null, { values });
     }).catch((err) => {
-      logger.error(err.message);
+      logMetadata.errors = err.errors;
+      logger.error(new VError(err, 'Failed to find locations'), logMetadata);
       callback(err);
     });
   },
 
   show(call, callback) {
+    const grpcMetadata = camelcaseKeys(call.metadata.getMap());
+    const logMetadata = {
+      userId: grpcMetadata.authorId,
+      correlationId: grpcMetadata.correlationId,
+      endpoint: 'Get',
+    };
     models.Location.findById(call.request.id, { raw: true }).then((location) => {
       if (location) {
         const result = models.stringifyDates(location);
@@ -40,71 +54,113 @@ module.exports = {
         callback({ message: 'location not found', code: grpc.status.NOT_FOUND });
       }
     }).catch((err) => {
-      logger.error(err.message);
+      logMetadata.errors = err.errors;
+      logger.error(new VError(err, 'Failed to get location'), logMetadata);
       callback(err);
     });
   },
 
   update(call, callback) {
+    const grpcMetadata = camelcaseKeys(call.metadata.getMap());
+    const attributes = _.pick(grpcMetadata, 'authorId', 'authorName', 'correlationId');
+    const logMetadata = {
+      userId: grpcMetadata.authorId,
+      correlationId: grpcMetadata.correlationId,
+      endpoint: 'Update',
+    };
     const payload = _.pick(call.request, ['id', 'name', 'timeZone']);
-    const metadata = camelcaseKeys(call.metadata.getMap());
     models.Location.findById(payload.id).then((location) => {
       if (location) {
-        metadata.eventType = 'LocationUpdatedEvent';
+        attributes.eventType = 'LocationUpdatedEvent';
         const message = {
           data: payload,
-          attributes: metadata,
+          attributes,
         };
 
         producer.emitModel(models.Location, message, 'location', (err, response) => {
-          callback(err, response);
+          if (err) {
+            logger.error(new VError(err, `Failed to emit to ${attributes.eventType} event`),
+              logMetadata);
+            callback(err, response);
+          }
+          callback(null, response);
         });
       } else {
         callback({ message: 'location not found', code: grpc.status.NOT_FOUND });
       }
     }).catch((err) => {
-      logger.error(err.message);
+      logMetadata.errors = err.errors;
+      logger.error(new VError(err, 'Failed to update location'), logMetadata);
       callback(err);
     });
   },
 
   create(call, callback) {
-    const metadata = camelcaseKeys(call.metadata.getMap());
+    const grpcMetadata = camelcaseKeys(call.metadata.getMap());
+    const attributes = _.pick(grpcMetadata, 'authorId', 'authorName', 'correlationId');
+    const logMetadata = {
+      userId: grpcMetadata.authorId,
+      correlationId: grpcMetadata.correlationId,
+      endpoint: 'Create',
+    };
     const payload = _.pick(call.request, 'id', 'name', 'timeZone');
-    metadata.eventType = 'LocationCreatedEvent';
+    attributes.eventType = 'LocationCreatedEvent';
     const message = {
       data: payload,
-      attributes: metadata,
+      attributes,
     };
     producer.emitModel(models.Location, message, 'location', (err, response) => {
-      callback(err, response);
+      if (err) {
+        logger.error(new VError(err, `Failed to emit to ${attributes.eventType} event`),
+          logMetadata);
+        callback(err, response);
+      }
+      callback(null, response);
     });
   },
 
   destroy(call, callback) {
-    const metadata = camelcaseKeys(call.metadata.getMap());
+    const grpcMetadata = camelcaseKeys(call.metadata.getMap());
+    const attributes = _.pick(grpcMetadata, 'authorId', 'authorName', 'correlationId');
+    const logMetadata = {
+      userId: grpcMetadata.authorId,
+      correlationId: grpcMetadata.correlationId,
+      endpoint: 'Delete',
+    };
     const payload = { id: call.request.id };
     models.Location.findById(call.request.id).then((location) => {
       if (location) {
-        metadata.eventType = 'LocationDeletedEvent';
+        attributes.eventType = 'LocationDeletedEvent';
         const message = {
           data: payload,
-          attributes: metadata,
+          attributes,
         };
 
         producer.emit(message, 'location', (err) => {
-          callback(err, {});
+          if (err) {
+            logger.error(new VError(err, `Failed to emit to ${attributes.eventType} event`),
+              logMetadata);
+            callback(err, {});
+          }
+          callback(null, {});
         });
       } else {
         callback({ message: 'location not found', code: grpc.status.NOT_FOUND });
       }
     }).catch((err) => {
-      logger.error(err.message);
+      logMetadata.errors = err.errors;
+      logger.error(new VError(err, 'Failed to delete location'), logMetadata);
       callback(err);
     });
   },
 
   allLocationsDetails(call, callback) {
+    const grpcMetadata = camelcaseKeys(call.metadata.getMap());
+    const logMetadata = {
+      userId: grpcMetadata.authorId,
+      correlationId: grpcMetadata.correlationId,
+      endpoint: 'GetAllLocationsDetails',
+    };
     async.waterfall([
       (step) => {
         usersClient.getUsersCountPerLocation({}, (err, data) => {
@@ -125,7 +181,9 @@ module.exports = {
            });
            step(null, result);
          }).catch((err) => {
-           logger.error(err);
+           logMetadata.errors = err.errors;
+           logger.error(new VError(err, 'Failed to get all locations details'),
+            logMetadata);
            step(err);
          });
       },
@@ -135,6 +193,12 @@ module.exports = {
   },
 
   getLocationDetails(call, callback) {
+    const grpcMetadata = camelcaseKeys(call.metadata.getMap());
+    const logMetadata = {
+      userId: grpcMetadata.authorId,
+      correlationId: grpcMetadata.correlationId,
+      endpoint: 'GetLocationDetails',
+    };
     const locationID = call.request.id;
     async.waterfall([
       (step) => {
@@ -143,7 +207,9 @@ module.exports = {
             step(null, location);
           })
           .catch((err) => {
-            logger.error(err);
+            logMetadata.errors = err.errors;
+            logger.error(new VError(err, 'Failed to get location details'),
+             logMetadata);
             step(err);
           });
       },
