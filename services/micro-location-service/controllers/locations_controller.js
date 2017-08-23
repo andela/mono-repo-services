@@ -163,7 +163,7 @@ module.exports = {
     };
     async.waterfall([
       (step) => {
-        usersClient.getUsersCountPerLocation({}, (err, data) => {
+        usersClient.getUsersCountPerLocation({}, call.metadata, (err, data) => {
           if (err) {
             step(err);
           } else {
@@ -214,13 +214,13 @@ module.exports = {
           });
       },
       (prev, step) => {
-        usersClient.getUsersCountPerLevelByLocation({ id: locationID }, (err, result) => {
+        usersClient.getUsersCountPerLevelByLocation({ id: locationID }, call.metadata, (err, result) => {
           step(null, result.values);
         });
       },
       (prev, step) => {
         const ids = Object.keys(prev);
-        levelsClient.getLevelNames({ ids }, (err, data) => {
+        levelsClient.getLevelNames({ ids }, call.metadata, (err, data) => {
           const result = _.map(prev, (count, id) => (
             { id, name: data.values[id], count }
           ));
