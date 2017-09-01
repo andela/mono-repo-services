@@ -45,7 +45,7 @@ function getTopic(topicName) {
       { topicName: 'slack', subscriptionName: 'authorization'}
     ]
 **/
-function subscribe(options, cb) {
+function subscribe(options, cb, ackDeadlineSeconds) {
   let subscriptions = [];
 
   // Event handlers
@@ -62,7 +62,8 @@ function subscribe(options, cb) {
   .then((topics) => {
     topics.forEach((topic, index) => {
       const option = options[index]
-      const params = { ackDeadlineSeconds: 300, interval: 60 };
+      ackDeadlineSeconds = ackDeadlineSeconds || 300;
+      const params = { ackDeadlineSeconds, interval: 60 };
       const fullName = `${option.topicName}_${option.subscriptionName}`;
       topic.subscribe(fullName, params, (err, subscription) => {
       if (err) {
