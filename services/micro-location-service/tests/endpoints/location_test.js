@@ -16,15 +16,19 @@ const locations = [
     id: '-KPE-AopjdUJrbOELUuk',
     name: 'Lagos',
     timeZone: '+2',
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: '2017-09-06T20:45:26.743Z',
+    updatedAt: '2017-09-06T20:45:26.743Z',
+    auditorId: '',
+    auditorName: '',
   },
   {
     id: '-KPE-IC7p2-CpGKnmUni',
     name: 'Kenya',
     timeZone: '+4',
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: '2017-09-06T20:45:26.743Z',
+    updatedAt: '2017-09-06T20:45:26.743Z',
+    auditorId: '',
+    auditorName: '',
   },
 ];
 
@@ -49,6 +53,7 @@ describe('endpoints', () => {
         data.length.should.equal(2);
         data[0].name.should.equal(locations[0].name);
         data[1].name.should.equal(locations[1].name);
+        data.should.be.an.instanceOf(Array);
         done();
       });
     });
@@ -60,7 +65,13 @@ describe('endpoints', () => {
     it('should return a single location', (done) => {
       client.get(payload, (err, data) => {
         should.not.exist(err);
+        data.id.should.equal(locations[0].id);
         data.name.should.equal(locations[0].name);
+        data.timeZone.should.equal(locations[0].timeZone);
+        data.createdAt.should.equal(locations[0].createdAt);
+        data.updatedAt.should.equal(locations[0].updatedAt);
+        data.auditorId.should.equal(locations[0].auditorId);
+        data.auditorName.should.equal(locations[0].auditorName);
         done();
       });
     });
@@ -75,9 +86,10 @@ describe('endpoints', () => {
       client.update(payload, (err, data) => {
         should.not.exist(err);
         should.exist(data);
+        data.should.be.an.instanceOf(Object);
         done();
       });
-    }).timeout(5000);
+    });
   });
 
   describe('#create', () => {
@@ -89,6 +101,7 @@ describe('endpoints', () => {
       client.create(payload, (err, data) => {
         should.not.exist(err);
         should.exist(data);
+        data.should.be.an.instanceOf(Object);
         done();
       });
     });
@@ -100,6 +113,7 @@ describe('endpoints', () => {
       client.delete(payload, (err, data) => {
         should.not.exist(err);
         should.exist(data);
+        data.should.be.an.instanceOf(Object);
         done();
       });
     });
@@ -109,9 +123,13 @@ describe('endpoints', () => {
     it('should return the correct data', (done) => {
       client.getAllLocationsDetails({}, (err, result) => {
         const data = result.values;
+        should.not.exist(err);
+        should.exist(data);
         data.length.should.equal(2);
         data[0].title.should.equal('Lagos');
         data[0].count.should.equal(35);
+        data[1].title.should.equal('Kenya');
+        data[1].count.should.equal(123);
         done();
       });
     });
@@ -121,9 +139,15 @@ describe('endpoints', () => {
     it('should return correct count of data', (done) => {
       const payload = { id: locations[0].id };
       client.getLocationDetails(payload, (err, data) => {
+        should.not.exist(err);
+        should.exist(data);
         data.values.length.should.equal(2);
+        data.values[0].id.should.equal('d0-a-trainee');
         data.values[0].name.should.equal('D0B-SIMULATIONS');
         data.values[0].count.should.equal(13);
+        data.values[1].id.should.equal('d1-jr-consultant');
+        data.values[1].name.should.equal('D1-Developer');
+        data.values[1].count.should.equal(22);
         done();
       });
     });
