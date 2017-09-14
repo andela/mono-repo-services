@@ -29,7 +29,6 @@ module.exports = {
     .then((topic) => {
       topic.publish(message, { raw: true }, (err) => {
         if (err) {
-          metadata.method = 'emit';
           logger.error(new VError(err, `failed to publish event`), message.attributes);
           cb(err);
         } else {
