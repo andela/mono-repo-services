@@ -5,19 +5,22 @@ const BugsnagTransport = require('winston-bugsnag').BugsnagTransport;
 const env = process.env.NODE_ENV || 'development';
 const VError = require('verror').VError;
 
-const podName = process.env.POD_NAME || 'myService-1';
-const values = podName.split('-');
+const podName = process.env.POD_NAME || 'defaultService-1';
+const serviceName = podName.substring(0, podName.length - 17); // Pod name : servicename +  '-' + 10 bytes numeric + '-' + 5 bytes alphanumeric string
+const deploymentTag = process.env.DEPLOYMENT_TAG
 const serviceContext = {
-  service: values[0],
-  version: values[1]
+  service: serviceName,
+  version: deploymentTag
 };
 
 let format = 'text';
 let level = 'debug';
+
 if (env === 'staging' || env === 'production') {
   format = 'json';
   level = 'info';
 }
+
 const transports = [
     new EpicTransport({
       format,
@@ -32,10 +35,8 @@ if (env === 'production') {
   bugsnag.register(process.env.BUGSNAG_API_KEY);
   transports.push(new BugsnagTransport());
 }
+
 winston.configure({ transports });
-
-
-
 winston.setLevels(winston.config.syslog.levels);
 
 // monkey patch error and crit winston methods
@@ -49,7 +50,6 @@ winston.setLevels(winston.config.syslog.levels);
     method.apply(this, args);
   };
 });
-
 
 process.on('unhandledRejection', function (err) {
     winston.error(err, { cause: 'unhandled rejection' });
