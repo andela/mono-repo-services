@@ -5,9 +5,9 @@ const BugsnagTransport = require('winston-bugsnag').BugsnagTransport;
 const env = process.env.NODE_ENV || 'development';
 const VError = require('verror').VError;
 
-const podName = process.env.POD_NAME || 'defaultService-1';
+const podName = process.env.POD_NAME || 'default-service-1234567890-abcde';
+const deploymentTag = process.env.DEPLOYMENT_TAG || 'abcde'
 const serviceName = podName.substring(0, podName.length - 17); // Pod name : servicename +  '-' + 10 bytes numeric + '-' + 5 bytes alphanumeric string
-const deploymentTag = process.env.DEPLOYMENT_TAG
 const serviceContext = {
   service: serviceName,
   version: deploymentTag
