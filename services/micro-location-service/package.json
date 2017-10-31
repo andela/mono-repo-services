@@ -25,7 +25,7 @@
     "bugsnag": "^1.9.0",
     "camelcase-keys": "^4.0.0",
     "dotenv": "^2.0.0",
-    "epic_logger": "github:andela/epic-logger-node#v1.0.5",
+    "epic_logger": "github:andela/epic-logger-node#v1.0.6",
     "express": "^4.14.0",
     "grpc": "~1.3.0",
     "hystrixjs": "0.0.3",
