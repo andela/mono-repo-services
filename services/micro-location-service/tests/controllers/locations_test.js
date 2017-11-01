@@ -28,11 +28,7 @@ const locations = [
 describe('Locations controllers', () => {
   describe('List all Locations: Success', () => {
     beforeEach(() => {
-      sinon.stub(models.Location, 'findAll', () => {
-        const deferred = Q.defer();
-        deferred.resolve(locations);
-        return deferred.promise;
-      });
+      sinon.stub(models.Location, 'findAll', () => Promise.resolve(locations));
     });
 
     afterEach(() => {
@@ -65,11 +61,7 @@ describe('Locations controllers', () => {
 
   describe('List all Locations: failure', () => {
     beforeEach(() => {
-      sinon.stub(models.Location, 'findAll', () => {
-        const deferred = Q.defer();
-        deferred.reject(new Error('Something happened'));
-        return deferred.promise;
-      });
+      sinon.stub(models.Location, 'findAll', () => Promise.reject(new Error('Something happened')));
     });
 
     afterEach(() => {
@@ -88,11 +80,7 @@ describe('Locations controllers', () => {
   describe('Get a Location: success', () => {
     const call = { metadata, request: { id: '-KPE-AopjdUJrbOELUuk' } };
     beforeEach(() => {
-      sinon.stub(models.Location, 'findById', () => {
-        const deferred = Q.defer();
-        deferred.resolve(locations[0]);
-        return deferred.promise;
-      });
+      sinon.stub(models.Location, 'findById', () => Promise.resolve(locations[0]));
     });
 
     afterEach(() => {
@@ -125,11 +113,8 @@ describe('Locations controllers', () => {
   describe('Get a user: failure', () => {
     const call = { metadata, request: { id: 1 } };
     beforeEach(() => {
-      sinon.stub(models.Location, 'findById', () => {
-        const deferred = Q.defer();
-        deferred.reject(new Error('there was a problem'));
-        return deferred.promise;
-      });
+      const err = new Error('there was a problem');
+      sinon.stub(models.Location, 'findById', () => Promise.reject(err));
     });
 
     afterEach(() => {
@@ -192,20 +177,15 @@ describe('Locations controllers', () => {
   describe('Update success', () => {
     const call = { metadata, request: {} };
     beforeEach(() => {
-      sinon.stub(models.Location, 'findById', () => {
-        const deferred = Q.defer();
-        deferred.resolve(locations[0]);
-        return deferred.promise;
-      });
-
-      sinon.stub(producer, 'emitModel', (model, data, location, cb) => {
+      sinon.stub(models.Location, 'findById', () => Promise.resolve(locations[0]));
+      sinon.stub(producer, 'emit', (data, location, cb) => {
         cb(null, {});
       });
     });
 
     afterEach(() => {
       models.Location.findById.restore();
-      producer.emitModel.restore();
+      producer.emit.restore();
     });
 
     it('should not return error', (done) => {
@@ -227,20 +207,15 @@ describe('Locations controllers', () => {
   describe('Update failure', () => {
     const call = { metadata, request: {} };
     beforeEach(() => {
-      sinon.stub(models.Location, 'findById', () => {
-        const deferred = Q.defer();
-        deferred.reject(new Error('Error Occured'));
-        return deferred.promise;
-      });
-
-      sinon.stub(producer, 'emitModel', (model, data, location, cb) => {
+      sinon.stub(models.Location, 'findById', () => Promise.reject(new Error('Error Occured')));
+      sinon.stub(producer, 'emit', (model, data, location, cb) => {
         cb(null, {});
       });
     });
 
     afterEach(() => {
       models.Location.findById.restore();
-      producer.emitModel.restore();
+      producer.emit.restore();
     });
 
     it('should return error', (done) => {
@@ -256,20 +231,17 @@ describe('Locations controllers', () => {
   describe('Create', () => {
     const call = { metadata, request: { name: 'Nigeria' } };
     beforeEach(() => {
-      sinon.stub(models.Location, 'findById', () => {
-        const deferred = Q.defer();
-        deferred.reject(new Error('Error Occured'));
-        return deferred.promise;
-      });
-
-      sinon.stub(producer, 'emitModel', (model, data, location, cb) => {
+      sinon.stub(models.Location, 'findById', () => Promise.resolve(locations[0]));
+      sinon.stub(models.Location, 'create', () => Promise.resolve());
+      sinon.stub(producer, 'emit', (data, location, cb) => {
         cb(null, {});
       });
     });
 
     afterEach(() => {
       models.Location.findById.restore();
-      producer.emitModel.restore();
+      models.Location.create.restore();
+      producer.emit.restore();
     });
 
     it('should return data', (done) => {
@@ -285,12 +257,7 @@ describe('Locations controllers', () => {
   describe('Destroy: Success', () => {
     const call = { metadata, request: {} };
     beforeEach(() => {
-      sinon.stub(models.Location, 'findById', () => {
-        const deferred = Q.defer();
-        deferred.resolve(locations[0]);
-        return deferred.promise;
-      });
-
+      sinon.stub(models.Location, 'findById', () => Promise.resolve(locations[0]));
       sinon.stub(producer, 'emit', (data, location, cb) => {
         cb(null, {});
       });
@@ -314,12 +281,7 @@ describe('Locations controllers', () => {
   describe('Destroy: Failure', () => {
     const call = { metadata, request: {} };
     beforeEach(() => {
-      sinon.stub(models.Location, 'findById', () => {
-        const deferred = Q.defer();
-        deferred.reject(new Error('Error occured'));
-        return deferred.promise;
-      });
-
+      sinon.stub(models.Location, 'findById', () => Promise.reject(new Error('Error occured')));
       sinon.stub(producer, 'emit', (data, location, cb) => {
         cb(null, {});
       });
@@ -342,11 +304,7 @@ describe('Locations controllers', () => {
 
   describe('All details', () => {
     beforeEach(() => {
-      sinon.stub(models.Location, 'findAll', () => {
-        const deferred = Q.defer();
-        deferred.resolve(locations);
-        return deferred.promise;
-      });
+      sinon.stub(models.Location, 'findAll', () => Promise.resolve(locations));
     });
 
     afterEach(() => {
@@ -366,11 +324,7 @@ describe('Locations controllers', () => {
 
   describe('getLocationDetails', () => {
     beforeEach(() => {
-      sinon.stub(models.Location, 'findById', () => {
-        const deferred = Q.defer();
-        deferred.resolve(locations[0]);
-        return deferred.promise;
-      });
+      sinon.stub(models.Location, 'findById', () => Promise.resolve(locations[0]));
     });
 
     afterEach(() => {

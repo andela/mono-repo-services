@@ -1,12 +1,13 @@
 const should = require('chai').should();
 const grpc = require('grpc');
-const models = global.models;
 const root = require('path').join(__dirname, '..', '..', 'shared');
+
 const proto = grpc.load(
   { root, file: 'location/location-svc.proto' },
   'proto',
   { convertFieldsToCamelCase: true }
 );
+const models = global.models;
 /* eslint-disable new-cap */
 const client = new proto.location.LocationService(process.env.SERVICE_URL,
   grpc.credentials.createInsecure());
@@ -86,23 +87,30 @@ describe('endpoints', () => {
       client.update(payload, (err, data) => {
         should.not.exist(err);
         should.exist(data);
-        data.should.be.an.instanceOf(Object);
-        done();
+        client.get({ id: payload.id }, (_, result) => {
+          result.timeZone.should.equal(payload.timeZone);
+          done();
+        });
       });
     });
   });
 
   describe('#create', () => {
     it('emit LocationCreatedEvent', (done) => {
-      const payload = Object.assign({}, locations[0]);
-      delete payload.createdAt;
-      delete payload.updatedAt;
+      const payload = {
+        id: '-Kxr7GRXhRBb5Eyjjxdp',
+        name: 'Accra',
+        timeZone: '+0',
+      };
 
       client.create(payload, (err, data) => {
         should.not.exist(err);
         should.exist(data);
-        data.should.be.an.instanceOf(Object);
-        done();
+        client.get({ id: payload.id }, (_, result) => {
+          result.timeZone.should.equal(payload.timeZone);
+          result.name.should.equal(payload.name);
+          done();
+        });
       });
     });
   });
@@ -110,11 +118,12 @@ describe('endpoints', () => {
   describe('#delete', () => {
     const payload = { id: locations[0].id };
     it('emit LocationDeletedEvent', (done) => {
-      client.delete(payload, (err, data) => {
-        should.not.exist(err);
+      client.delete(payload, (_, data) => {
         should.exist(data);
-        data.should.be.an.instanceOf(Object);
-        done();
+        client.get({ id: payload.id }, (err) => {
+          should.exist(err);
+          done();
+        });
       });
     });
   });
