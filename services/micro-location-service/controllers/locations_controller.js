@@ -76,15 +76,22 @@ module.exports = {
           data: payload,
           attributes,
         };
-
-        producer.emitModel(models.Location, message, 'location', (err, response) => {
-          if (err) {
-            logger.error(new VError(err, `Failed to emit to ${attributes.eventType} event`),
-              logMetadata);
-            callback(err, response);
-          }
-          callback(null, response);
-        });
+        models.Location.update(payload,
+          { where: { id: payload.id }, fields: ['name', 'timeZone', 'updatedAt'] })
+          .then(() => {
+            producer.emit(message, 'location', (err, response) => {
+              if (err) {
+                logger.error(new VError(err, `Failed to emit to ${attributes.eventType} event`),
+                  logMetadata);
+                return callback(err, response);
+              }
+              callback(null, response);
+            });
+          }).catch((err) => {
+            logMetadata.errors = err.errors;
+            logger.error(new VError(err, 'Failed to update location'), logMetadata);
+            callback({ message: 'failed to create location', code: grpc.status.INVALID_ARGUMENT });
+          });
       } else {
         callback({ message: 'location not found', code: grpc.status.NOT_FOUND });
       }
@@ -106,16 +113,24 @@ module.exports = {
     const payload = _.pick(call.request, 'id', 'name', 'timeZone');
     attributes.eventType = 'LocationCreatedEvent';
     const message = {
-      data: payload,
+      data: Object.assign({}, payload),
       attributes,
     };
-    producer.emitModel(models.Location, message, 'location', (err, response) => {
-      if (err) {
-        logger.error(new VError(err, `Failed to emit to ${attributes.eventType} event`),
-          logMetadata);
-        callback(err, response);
-      }
-      callback(null, response);
+    payload.createdAt = payload.updatedAt = Date.now();
+    models.Location.create(payload)
+    .then(() => {
+      producer.emit(message, 'location', (err, response) => {
+        if (err) {
+          logger.error(new VError(err, `Failed to emit to ${attributes.eventType} event`),
+            logMetadata);
+          return callback(err, response);
+        }
+        callback(null, response);
+      });
+    }).catch((err) => {
+      logMetadata.errors = err.errors;
+      logger.error(new VError(err, 'Failed to create location'), logMetadata);
+      callback(err);
     });
   },
 
@@ -135,14 +150,21 @@ module.exports = {
           data: payload,
           attributes,
         };
-
-        producer.emit(message, 'location', (err) => {
-          if (err) {
-            logger.error(new VError(err, `Failed to emit to ${attributes.eventType} event`),
-              logMetadata);
-            callback(err, {});
-          }
-          callback(null, {});
+        models.Location.destroy({ where: { id: payload.id } })
+        .then(() => {
+          producer.emit(message, 'location', (err) => {
+            if (err) {
+              logger.error(new VError(err, `Failed to emit to ${attributes.eventType} event`),
+                logMetadata);
+              callback(err, {});
+            }
+            callback(null, {});
+          });
+        })
+        .catch((error) => {
+          logMetadata.errors = error.errors;
+          logger.error(new VError(error, 'Failed to delete location'), logMetadata);
+          callback({ message: 'failed to delete location', code: grpc.status.INVALID_ARGUMENT });
         });
       } else {
         callback({ message: 'location not found', code: grpc.status.NOT_FOUND });
