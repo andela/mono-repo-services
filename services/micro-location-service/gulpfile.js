@@ -41,7 +41,6 @@ gulp.task('server:test', ['db:migrate', 'coverage-setup'], () => (
       './tests/controllers/*.js',
       './tests/models/*.js',
       './tests/endpoints/*.js',
-      './tests/events/*.js',
     ])
     .pipe(mocha())
     .on('error', () => {

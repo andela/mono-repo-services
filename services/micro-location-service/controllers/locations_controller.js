@@ -19,6 +19,23 @@ const usersClient = new usersProto.user.UserService(
   grpc.credentials.createInsecure()
 );
 
+const emit = (payload, attributes, logMetadata) => {
+  const message = {
+    data: Object.assign({}, payload),
+    attributes,
+  };
+  return new Promise((resolve, reject) => {
+    producer.emit(message, 'location', (err) => {
+      if (err) {
+        logger.error(new VError(err, `Failed to emit to ${attributes.eventType} event`),
+          logMetadata);
+        return reject(err);
+      }
+      return resolve({});
+    });
+  });
+};
+
 module.exports = {
   index(call, callback) {
     const grpcMetadata = camelcaseKeys(call.metadata.getMap());
@@ -72,26 +89,21 @@ module.exports = {
     models.Location.findById(payload.id).then((location) => {
       if (location) {
         attributes.eventType = 'LocationUpdatedEvent';
-        const message = {
-          data: payload,
-          attributes,
-        };
-        models.Location.update(payload,
-          { where: { id: payload.id }, fields: ['name', 'timeZone', 'updatedAt'] })
-          .then(() => {
-            producer.emit(message, 'location', (err, response) => {
-              if (err) {
-                logger.error(new VError(err, `Failed to emit to ${attributes.eventType} event`),
-                  logMetadata);
-                return callback(err, response);
-              }
-              callback(null, response);
-            });
-          }).catch((err) => {
-            logMetadata.errors = err.errors;
-            logger.error(new VError(err, 'Failed to update location'), logMetadata);
-            callback({ message: 'failed to create location', code: grpc.status.INVALID_ARGUMENT });
-          });
+        models.sequelize.transaction((transaction) => {
+          payload.updatedAt = Date.now();
+          const where = { id: payload.id };
+          const fields = ['name', 'timeZone', 'updatedAt'];
+          return models.Location.update(payload,
+            { where, fields }, { transaction })
+            .then(() => emit(payload, attributes, logMetadata));
+        })
+        .then(() => {
+          callback(null, {});
+        }).catch((err) => {
+          logMetadata.errors = err.errors;
+          logger.error(new VError(err, 'Failed to update location'), logMetadata);
+          callback({ message: 'failed to create location', code: grpc.status.INVALID_ARGUMENT });
+        });
       } else {
         callback({ message: 'location not found', code: grpc.status.NOT_FOUND });
       }
@@ -112,22 +124,16 @@ module.exports = {
     };
     const payload = _.pick(call.request, 'id', 'name', 'timeZone');
     attributes.eventType = 'LocationCreatedEvent';
-    const message = {
-      data: Object.assign({}, payload),
-      attributes,
-    };
-    payload.createdAt = payload.updatedAt = Date.now();
-    models.Location.create(payload)
+
+    models.sequelize.transaction((transaction) => {
+      payload.createdAt = payload.updatedAt = Date.now();
+      return models.Location.create(payload, transaction)
+        .then(() => emit(payload, attributes, logMetadata));
+    })
     .then(() => {
-      producer.emit(message, 'location', (err, response) => {
-        if (err) {
-          logger.error(new VError(err, `Failed to emit to ${attributes.eventType} event`),
-            logMetadata);
-          return callback(err, response);
-        }
-        callback(null, response);
-      });
-    }).catch((err) => {
+      callback(null, {});
+    })
+    .catch((err) => {
       logMetadata.errors = err.errors;
       logger.error(new VError(err, 'Failed to create location'), logMetadata);
       callback(err);
@@ -146,20 +152,12 @@ module.exports = {
     models.Location.findById(call.request.id).then((location) => {
       if (location) {
         attributes.eventType = 'LocationDeletedEvent';
-        const message = {
-          data: payload,
-          attributes,
-        };
-        models.Location.destroy({ where: { id: payload.id } })
+        models.sequelize.transaction((transaction) => (
+          models.Location.destroy({ where: { id: payload.id } }, { transaction })
+            .then(() => emit(payload, attributes, logMetadata))
+        ))
         .then(() => {
-          producer.emit(message, 'location', (err) => {
-            if (err) {
-              logger.error(new VError(err, `Failed to emit to ${attributes.eventType} event`),
-                logMetadata);
-              callback(err, {});
-            }
-            callback(null, {});
-          });
+          callback(null, {});
         })
         .catch((error) => {
           logMetadata.errors = error.errors;
