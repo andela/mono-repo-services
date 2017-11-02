@@ -127,7 +127,7 @@ module.exports = {
 
     models.sequelize.transaction((transaction) => {
       payload.createdAt = payload.updatedAt = Date.now();
-      return models.Location.create(payload, transaction)
+      return models.Location.create(payload, { transaction })
         .then(() => emit(payload, attributes, logMetadata));
     })
     .then(() => {
