@@ -24,7 +24,7 @@ jobs:
           IMAGE_PROD: location
           GRPC_HEALTH_CHECK_TAG: 1.0.1
           DOCKER_PROJECT_NAME: nodejs-docker
-          TAG: v1.0.0
+          TAG: v2.0.1
           USE_CIRCLECI_BETA: yes
       - image: postgres:9.6-alpine
         environment:
