@@ -2,8 +2,8 @@ const bugsnag = require('bugsnag');
 const Transport = require('winston/lib/winston/transports/transport').Transport;
 
 class BugsnagTransport extends Transport {
-  constructor({ level = 'error', apiKey, serviceContext, ...opts }) {
-    super({ level, apiKey, ...opts });
+  constructor({ level = 'error', apiKey, serviceContext }) {
+    super({ level, apiKey });
     this.name = 'bugsnag';
     this.level = level;
     this.serviceContext = serviceContext;
