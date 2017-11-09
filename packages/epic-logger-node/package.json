@@ -27,7 +27,6 @@
     "bugsnag": "^2.0.1",
     "lodash.mapvalues": "^4.6.0",
     "verror": "^1.10.0",
-    "winston": "^2.4.0",
-    "winston-bugsnag": "^3.0.2"
+    "winston": "^2.4.0"
   }
 }
