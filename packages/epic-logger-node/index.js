@@ -33,7 +33,7 @@ const transports = [
 
 if (env === 'production' || env === 'staging') {
   const apiKey = process.env.BUGSNAG_API_KEY;
-  transports.push(new BugsnagTransport({ apiKey, level }));
+  transports.push(new BugsnagTransport({ apiKey, level, serviceContext }));
 }
 
 winston.configure({ transports });
@@ -52,7 +52,7 @@ winston.setLevels(winston.config.syslog.levels);
 });
 
 process.on('unhandledRejection', function (err) {
-    winston.error(err, { cause: 'unhandled rejection' });
+  winston.error(err, { cause: 'unhandled rejection' });
 });
 
 module.exports = winston;
