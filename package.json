@@ -15,5 +15,10 @@
 		"cz-lerna-changelog": "^1.2.1",
 		"lerna": "^2.5.1",
 		"lerna-semantic-release": "^9.1.0"
-	}
+	},
+	"config": {
+    "commitizen": {
+      "path": "cz-lerna-changelog"
+    }
+  }
 }
