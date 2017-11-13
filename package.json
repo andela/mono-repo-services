@@ -1,4 +1,10 @@
 {
+	"private": true,
+	"workspaces": [
+    "services/*",
+    "packages/*",
+    "api-gateway"
+  ],
 	"devDependencies": {
 		"lerna": "^2.5.1"
 	}
