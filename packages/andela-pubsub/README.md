@@ -1,3 +1,3 @@
 ## Andela Pubsub
-This package houses tech team pubsub implementation.
+This package is a wrapper for google pubsub package.
 
