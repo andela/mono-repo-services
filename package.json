@@ -6,9 +6,7 @@
 		"api-gateway"
 	],
 	"scripts": {
-		"commit": "git-cz",
-		"semantic": "lerna-semantic-release pre",
-		"semantic-release": "lerna-semantic-release pre && lerna-semantic-release post && lerna-semantic-release perform",
+		"publish": "lerna publish --skip-npm --conventional-commits",
 		"bootstrap": "lerna bootstrap"
 	},
 	"devDependencies": {
