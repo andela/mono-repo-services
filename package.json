@@ -1,1 +1,22 @@
-""
+{
+	"private": true,
+	"workspaces": [
+		"services/*",
+		"packages/*",
+		"api-gateway"
+	],
+	"scripts": {
+		"commit": "git-cz",
+		"semantic": "lerna-semantic-release pre",
+		"semantic-release": "lerna-semantic-release pre && lerna-semantic-release post && lerna-semantic-release perform",
+		"bootstrap": "lerna bootstrap"
+	},
+	"devDependencies": {
+		"lerna": "^2.5.1"
+	},
+	"config": {
+		"commitizen": {
+			"path": "cz-lerna-changelog"
+		}
+	}
+}
