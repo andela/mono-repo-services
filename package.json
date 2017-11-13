@@ -7,11 +7,13 @@
 	],
 	"scripts": {
 		"commit": "git-cz",
-    "semantic-release": "lerna-semantic-release pre && lerna-semantic-release post && lerna-semantic-release perform",
-    "postinstall": "lerna bootstrap"
+		"semantic": "lerna-semantic-release pre",
+		"semantic-release": "lerna-semantic-release pre && lerna-semantic-release post && lerna-semantic-release perform",
+		"bootstrap": "lerna bootstrap"
 	},
 	"devDependencies": {
 		"cz-lerna-changelog": "^1.2.1",
-		"lerna": "^2.5.1"
+		"lerna": "^2.5.1",
+		"lerna-semantic-release": "^9.1.0"
 	}
 }

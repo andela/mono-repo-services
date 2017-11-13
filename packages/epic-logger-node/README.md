@@ -1,5 +1,5 @@
-Overview
-=======
+Overview of Epic Logger Node
+===========================
 This library allows standard node logging. It allows output of log data as either json objects or console messages. The JSON objects are more machine readable and thus can be ported to stack driver and bugsnag while the console messages have been formated to be more human readable with a capability to add details to them.
 
 Installing
