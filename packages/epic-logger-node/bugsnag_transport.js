@@ -7,7 +7,7 @@ class BugsnagTransport extends Transport {
     this.name = 'bugsnag';
     this.level = level;
     this.serviceContext = serviceContext;
-    bugsnag.register(apiKey, Object.assign({}));
+    bugsnag.register(apiKey);
   }
   
   log(level, msg, meta, cb) {
