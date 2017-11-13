@@ -1,6 +1,6 @@
 {
   "name": "andela-pubsub",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "a library that will house our pubsub implementation",
   "main": "index.js",
   "scripts": {
