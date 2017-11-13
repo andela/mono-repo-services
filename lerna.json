@@ -1,8 +1,8 @@
 {
   "lerna": "2.5.1",
   "packages": [
-    "packages/*",
     "services/*",
+    "packages/*",
     "api-gateway"
   ],
   "version": "independent"
