@@ -12,3 +12,6 @@ push: image
 
 deploy: push
 	kubectl set image deployment/logger logger=$(IMAGE):$(TAG)
+
+test:
+	node test.js
